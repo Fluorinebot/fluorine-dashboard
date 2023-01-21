@@ -1,27 +1,47 @@
-import { useEffect, useState } from 'react';
-import './App.css';
+import { useState } from "react";
+import {
+  BrowserRouter,
+  createBrowserRouter,
+  Route,
+  Router,
+  RouterProvider,
+  Routes,
+} from "react-router-dom";
+import Home from "./routes/home";
 
-function App() {  
-  const [guilds, setGuilds] = useState<any>({});
+const router = createBrowserRouter([
+  { path: "/", element: <Home /> },
+  { path: "/servers", element: <div>you're now on the servers page</div> },
+]);
 
-  useEffect(() => {
-    async function effect() {
-      const val = await fetch('http://localhost:8080/guilds', { method: 'GET' });
-      const obj = await val.text()
-      console.log(obj)
-      setGuilds(obj)
-    }
+export default function App() {
+  const prefersDarkScheme = window.matchMedia(
+    "(prefers-color-scheme: dark)"
+  ).matches;
 
-    effect()
-  }, [])
+  const currentTheme = localStorage.getItem("theme");
+
+  const [isDark, setDarkState] = useState<boolean>(
+    currentTheme ? JSON.parse(currentTheme) : prefersDarkScheme
+  );
+
+  document.body.classList.add(isDark ? "dark" : "light");
+
+  if (!currentTheme) {
+    localStorage.setItem("theme", JSON.stringify(prefersDarkScheme));
+  }
+
+  function setDark() {
+    localStorage.setItem("theme", JSON.stringify(!isDark));
+    setDarkState((dark: boolean) => !dark);
+    document.body.classList.toggle(isDark ? "dark" : "light");
+  }
 
   return (
-    <>
-    <a href="https://discord.com/api/oauth2/authorize?client_id=1056998560538824744&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fauth&response_type=code&scope=identify%20guilds">the fuck</a>
-    <br></br>
-    <code>{`${guilds}`}</code>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;

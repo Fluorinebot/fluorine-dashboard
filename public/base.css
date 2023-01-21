@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,800;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,500;1,600&family=Noto+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300;1,500&family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,800;1,400&display=swap');
+
+:root {
+  --increment: 0.5rem;
+  --shadow: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+
+  --brand-blue: #3974f7;
+  --brand-green: #68ff86;
+  --brand-yellow: #faca0f;
+  --brand-purple: #8e55d9;
+
+  --dark-border: #21201e;
+  --light-border: #fffbfa;
+}
+
+.light {
+  --slate: #f1f5f9;
+  --bg: #ffffff;
+  --hero: #e4e4e7;
+  --border: var(--light-border);
+  --brand-suited: var(--brand-dark);
+  --brand-text-color: var(--light-border);
+}
+
+.dark {
+  --slate: #171717;
+  --bg: #1e1e1e;
+  --hero: #060606;
+
+  --text-color: var(--light-border);
+  --border: var(--dark-border);
+  --brand-text-color: var(--dark-border);
+}
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  color: var(--text-color);
+  background: var(--bg);
+
+  transition-property: color background;
+  transition-timing-function: ease-in-out;
+  transition-duration: 150ms;
+
+  min-width: 425px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Poppins', sans-serif;
+}
