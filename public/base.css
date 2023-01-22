@@ -2,47 +2,47 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,500;1,600&family=Noto+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300;1,500&family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,800;1,400&display=swap');
 
 :root {
-  --increment: 0.5rem;
-  --shadow: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+    --increment: 0.5rem;
+    --shadow: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
 
-  --brand-blue: #3974f7;
-  --brand-green: #68ff86;
-  --brand-yellow: #faca0f;
-  --brand-purple: #8e55d9;
+    --brand-blue: #3974f7;
+    --brand-green: #68ff86;
+    --brand-yellow: #faca0f;
+    --brand-purple: #8e55d9;
 
-  --dark-border: #21201e;
-  --light-border: #fffbfa;
+    --dark-border: #23272b;
+    --light-border: #ffffff;
 }
 
 .light {
-  --slate: #f1f5f9;
-  --bg: #ffffff;
-  --hero: #e4e4e7;
-  --border: var(--light-border);
-  --brand-suited: var(--brand-dark);
-  --brand-text-color: var(--light-border);
+    --bg-primary: #f8f4f4;
+    --bg-secondary: #f0ecf4;
+    --bg-teritary: #e8e4ec;
+
+    --text-color: var(--dark-border);
+    --border: var(--light-border);
 }
 
 .dark {
-  --slate: #171717;
-  --bg: #1e1e1e;
-  --hero: #060606;
+    --bg-primary: #2c2f33;
+    --bg-secondary: #1f2124;
+    --bg-teritary: #18191c;
 
-  --text-color: var(--light-border);
-  --border: var(--dark-border);
-  --brand-text-color: var(--dark-border);
+    --text-color: var(--light-border);
+    --border: var(--dark-border);
 }
 
 body {
-  font-family: 'Noto Sans', sans-serif;
-  color: var(--text-color);
-  background: var(--bg);
+    font-family: 'Noto Sans', sans-serif;
+    color: var(--text-color);
+    background: var(--bg-primary);
 
-  transition-property: color background;
-  transition-timing-function: ease-in-out;
-  transition-duration: 150ms;
+    transition-property: color background;
+    transition-timing-function: ease-in-out;
+    transition-duration: 150ms;
 
-  min-width: 425px;
+    min-width: 425px;
+    overflow-x: hidden;
 }
 
 h1,
@@ -51,5 +51,21 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;
+}
+
+.ctaButton {
+    background: var(--brand-blue);
+    padding: calc(var(--increment) * 1.5);
+    font-family: 'Poppins';
+    font-weight: 600;
+    border-radius: calc(var(--increment) * 2);
+}
+
+.primaryButton {
+    background: var(--bg-teritary);
+    padding: calc(var(--increment) * 1.5);
+    font-family: 'Poppins';
+    font-weight: 600;
+    border-radius: calc(var(--increment) * 2);
 }

@@ -1,0 +1,22 @@
+.padded {
+    padding-bottom: calc(var(--increment) * 3);
+}
+
+.lessPadded {
+    padding-bottom: calc(var(--increment) * 2);
+    color: var(--brand-green);
+}
+
+.card {
+    display: flex;
+    padding-top: var(--increment);
+    padding-bottom: var(--increment);
+    align-content: center;
+}
+
+.cardImage {
+    border-radius: 50%;
+    margin-right: calc(var(--increment) * 1.5);
+    height: 48px;
+    width: 48px;
+}

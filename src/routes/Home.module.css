@@ -1,0 +1,14 @@
+.home {
+    display: flex;
+}
+
+.fullFlex {
+    flex: 75%;
+}
+
+.noticeBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
