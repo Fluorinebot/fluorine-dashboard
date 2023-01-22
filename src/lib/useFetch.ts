@@ -10,6 +10,7 @@ export function useFetch<T>(url: string, options: RequestInit = {}) {
         return setResponse((await res.json()) as T);
       } catch (e: any) {
         setResponse({ error: 'Fetch Failed', errorReason: e.message });
+        console.error(e);
       }
     })();
   }, []);

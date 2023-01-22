@@ -1,12 +1,21 @@
 import { useFetch } from '../lib/useFetch';
 import { APIGuild } from 'discord-api-types/v10';
-import { Navigate } from 'react-router-dom';
+import { CLIENT_ID, BASE_URI, REDIRECT_URI } from '../lib/constants';
 
 export default function Home() {
-  const isUserAuth = useFetch<(APIGuild & { fluorine: boolean }) | { error: string }>('https://localhost:8080/guilds');
+  const isUserAuth = useFetch<APIGuild & { fluorine: boolean }>(`${BASE_URI}/guilds`, { method: 'GET' });
 
-  if ((isUserAuth && 'error' in isUserAuth) || !isUserAuth) {
-  }
-
-  return <p>hi</p>;
+  return (
+    <>
+      {!isUserAuth && <p>please wait..</p>}
+      {isUserAuth && 'error' in isUserAuth && (
+        <a
+          href={`https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify%20guilds`}
+        >
+          you need to authorize, {isUserAuth.error}
+        </a>
+      )}
+      <p>hi</p>
+    </>
+  );
 }
