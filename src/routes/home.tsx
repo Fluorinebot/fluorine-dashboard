@@ -15,7 +15,7 @@ export default function Home() {
           you need to authorize, {isUserAuth.error}
         </a>
       )}
-      <p>hi</p>
+      <p>hi, {`${BASE_URI}/guilds`}</p>
     </>
   );
 }

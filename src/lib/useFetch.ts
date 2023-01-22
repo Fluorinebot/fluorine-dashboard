@@ -13,6 +13,7 @@ export function useFetch<T>(url: string, options: RequestInit = {}) {
         console.error(e);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return response;
