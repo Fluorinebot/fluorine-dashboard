@@ -14,9 +14,12 @@ const getIcon = (x: APIGuild & { fluorine: boolean }) =>
 
 function GuildCard({ guild }: { guild: APIGuild & { fluorine: boolean } }) {
     return (
-        <Link key={guild.id} to={`/${guild.id}`} className={styles.card}>
+        <Link to={`/${guild.id}`} className={styles.card}>
             <img className={styles.cardImage} src={getIcon(guild)} alt="" />
-            <h4>{guild.name}</h4>
+            <div className={styles.cardText}>
+                <h4 className="headingFive">{guild.name}</h4>
+                <p className={styles.cardId}>{guild.id}</p>
+            </div>
         </Link>
     );
 }
@@ -32,12 +35,17 @@ function Guilds({
 }) {
     return (
         <div className={styles.padded}>
-            <h3 className={styles.lessPadded}>{header}</h3>
+            <h3 className={`${styles.lessPadded} headingSix ${hasFluorine ? styles.fullFlex : ''}`}>{header}</h3>
             <div>
                 {data
-                    .filter(x => (hasFluorine ? x.fluorine : !x.fluorine) && isAllowed(x))
+                    .filter(x => (hasFluorine ? x.fluorine : !x.fluorine))
+                    .sort((x, y) => {
+                        if (x.name.toLowerCase() < y.name.toLowerCase()) return -1;
+                        if (x.name.toLowerCase() > y.name.toLowerCase()) return 1;
+                        return 0;
+                    })
                     .map(guild => (
-                        <GuildCard guild={guild} />
+                        <GuildCard key={guild.id} guild={guild} />
                     ))}
             </div>
         </div>
@@ -46,17 +54,26 @@ function Guilds({
 
 export default function GuildList() {
     const data = useFetch<{ guilds: (APIGuild & { fluorine: boolean })[] }>(`${BASE_URI}/guilds`, { method: 'GET' });
+    let JSXReturn;
 
-    return (
-        <>
-            {!data && <p>Loading your servers</p>}
-            {data && 'error' in data && <p>There was an error loading your servers, try again. </p>}
-            {data && 'guilds' in data && (
-                <>
-                    <Guilds header="Servers You Can Edit" data={data.guilds} hasFluorine={true} />
-                    <Guilds header="Servers You Can Add Fluorine To" data={data.guilds} hasFluorine={false} />
-                </>
-            )}
-        </>
-    );
+    if (!data) {
+        JSXReturn = <p>Loading your servers</p>;
+    }
+
+    if (data && 'error' in data) {
+        JSXReturn = <p>There was an error loading your servers, try again. </p>;
+    }
+
+    if (data && 'guilds' in data) {
+        const filtered = data.guilds.filter(x => isAllowed(x));
+
+        JSXReturn = (
+            <div className={styles.flexContainer}>
+                <Guilds header="Servers You Can Edit" data={filtered} hasFluorine={true} />
+                <Guilds header="Servers You Can Add Fluorine To" data={filtered} hasFluorine={false} />
+            </div>
+        );
+    }
+
+    return <>{JSXReturn}</>;
 }

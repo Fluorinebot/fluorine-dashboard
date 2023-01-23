@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-export function useFetch<T>(url: string, options: RequestInit = {}) {
-    const [response, setResponse] = useState<T | { error: string; errorReason: string } | undefined>();
+export function useFetch<T, K = {}>(url: string, options: RequestInit = {}) {
+    const [response, setResponse] = useState<T | { error: string; errorReason: string } | undefined | K>();
 
     useEffect(() => {
         (async () => {

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { AsideBoundary } from './ErrorBoundary';
 import GuildList from './GuildList';
 import styles from './Sidebar.module.css';
 
@@ -18,9 +19,12 @@ export default function Sidebar({ listing }: { listing: 'guilds' | 'options' }) 
     return (
         <nav className={styles.sidebar}>
             <div className={styles.header}>
-                <h1 className={styles.headerText}>Fluorine</h1>
+                <h1 className={`${styles.headerText} headingOne`}>Fluorine</h1>
             </div>
-            <div className={styles.displayedContent}>{JSXReturn}</div>
+            <div className={styles.displayedContent}>
+                {' '}
+                <AsideBoundary>{JSXReturn} </AsideBoundary>
+            </div>
         </nav>
     );
 }

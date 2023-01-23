@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,800;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,600;0,700;0,800;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,500;1,600&family=Noto+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300;1,500&family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,800;1,400&display=swap');
 
 :root {
@@ -9,9 +9,13 @@
     --brand-green: #68ff86;
     --brand-yellow: #faca0f;
     --brand-purple: #8e55d9;
+    --brand-red: #ed4245;
 
     --dark-border: #23272b;
     --light-border: #ffffff;
+
+    --light-grey: #c0bcbc;
+    --dark-grey: #4f5660;
 }
 
 .light {
@@ -21,6 +25,7 @@
 
     --text-color: var(--dark-border);
     --border: var(--light-border);
+    --grey: var(--dark-grey);
 }
 
 .dark {
@@ -30,6 +35,7 @@
 
     --text-color: var(--light-border);
     --border: var(--dark-border);
+    --grey: var(--light-grey);
 }
 
 body {
@@ -42,7 +48,11 @@ body {
     transition-duration: 150ms;
 
     min-width: 425px;
-    overflow-x: hidden;
+    font-size: calc(var(--increment) * 2.25);
+}
+
+.root {
+    overflow: clip;
 }
 
 h1,
@@ -52,6 +62,8 @@ h4,
 h5,
 h6 {
     font-family: 'Poppins', sans-serif;
+    font-size: calc(var(--increment) * 2.25);
+    font-weight: 400;
 }
 
 .ctaButton {
@@ -60,6 +72,21 @@ h6 {
     font-family: 'Poppins';
     font-weight: 600;
     border-radius: calc(var(--increment) * 2);
+    border: none;
+    margin: var(--increment);
+    cursor: pointer;
+    color: var(--text-color);
+    margin-left: 0 !important;
+}
+
+.ctaButton::hover {
+    box-shadow: var(--shadow);
+}
+
+.ctaButton[disabled] {
+    color: var(--text-color);
+    opacity: 50%;
+    cursor: not-allowed;
 }
 
 .primaryButton {
@@ -68,4 +95,66 @@ h6 {
     font-family: 'Poppins';
     font-weight: 600;
     border-radius: calc(var(--increment) * 2);
+}
+
+.headingOne {
+    font-size: calc(var(--increment) * 3.75);
+    font-weight: 800;
+}
+
+.headingTwo {
+    font-size: calc(var(--increment) * 3.5);
+    font-weight: 800;
+}
+
+.headingThree {
+    font-size: calc(var(--increment) * 3.25);
+    font-weight: 700;
+}
+
+.headingFour {
+    font-size: calc(var(--increment) * 3);
+    font-weight: 700;
+}
+
+.headingFive {
+    font-size: calc(var(--increment) * 2.75);
+    font-weight: 600;
+}
+
+.headingSix {
+    font-size: calc(var(--increment) * 2.5);
+    font-weight: 600;
+}
+
+.textHeading {
+    margin-bottom: calc(var(--increment) * 1.25);
+}
+
+input,
+textarea {
+    display: block;
+    margin-top: var(--increment) !important;
+}
+
+input[type='text'],
+textarea {
+    padding: calc(var(--increment) * 1.25);
+    border: none;
+    font-size: calc(var(--increment) * 2.25) !important;
+    width: 30vw;
+    margin-top: var(--increment) !important;
+    margin-bottom: var(--increment) !important;
+    background: var(--bg-teritary);
+    color: var(--text-color);
+    border-radius: calc(var(--increment) * 1.5);
+}
+
+form {
+    margin-top: calc(var(--increment) * 3) !important;
+    margin-bottom: calc(var(--increment) * 3) !important;
+}
+
+.grey {
+    color: var(--grey);
 }
