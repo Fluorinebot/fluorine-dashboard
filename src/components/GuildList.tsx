@@ -1,6 +1,6 @@
 import { APIGuild } from 'discord-api-types/v10';
 import { Link } from 'react-router-dom';
-import { BASE_URI } from '../lib/constants';
+import { BASE_URI, CLIENT_ID } from '../lib/constants';
 import { useFetch } from '../lib/useFetch';
 import styles from './GuildList.module.css';
 
@@ -14,13 +14,19 @@ const getIcon = (x: APIGuild & { fluorine: boolean }) =>
 
 function GuildCard({ guild }: { guild: APIGuild & { fluorine: boolean } }) {
     return (
-        <Link to={`/${guild.id}`} className={styles.card}>
+        <a
+            href={
+                guild.fluorine
+                    ? `/${guild.id}/general`
+                    : `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&scope=bot+applications.commands&permissions=1374389881878&guild_id=${guild.id}`
+            }
+            className={styles.card}
+        >
             <img className={styles.cardImage} src={getIcon(guild)} alt="" />
             <div className={styles.cardText}>
-                <h4 className="headingFive">{guild.name}</h4>
-                <p className={styles.cardId}>{guild.id}</p>
+                <h4 className="headingSix">{guild.name}</h4>
             </div>
-        </Link>
+        </a>
     );
 }
 
@@ -35,7 +41,7 @@ function Guilds({
 }) {
     return (
         <div className={styles.padded}>
-            <h3 className={`${styles.lessPadded} headingSix ${hasFluorine ? styles.fullFlex : ''}`}>{header}</h3>
+            <h3 className={`${styles.lessPadded} ${hasFluorine ? styles.fullFlex : ''}`}>{header}</h3>
             <div>
                 {data
                     .filter(x => (hasFluorine ? x.fluorine : !x.fluorine))

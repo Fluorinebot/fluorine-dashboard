@@ -1,7 +1,9 @@
-.home {
-    display: flex;
-}
+@media (min-width: 768px) {
+    .home {
+        display: flex;
+    }
 
-.fullFlex {
-    flex: 75%;
+    .fullFlex {
+        flex: 75%;
+    }
 }

@@ -1,35 +1,42 @@
 import { useState } from 'react';
-import { BrowserRouter, createBrowserRouter, Route, Router, RouterProvider, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useParams } from 'react-router-dom';
+import { ContentBoundary } from './components/ErrorBoundary';
 import Home from './routes/Home';
 import Server from './routes/Server';
 
-const router = createBrowserRouter([
-    { path: '/', element: <Home /> },
-    { path: '/servers', element: <div>you're now on the servers page</div> }
-]);
+const Redirect: React.FC<{}> = () => {
+    const params = useParams();
+    return <Navigate to={`/${params.id}/general`} />;
+};
 
 export default function App() {
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const currentTheme = localStorage.getItem('theme');
+    const currentTheme = localStorage.getItem('darkThemeEnabled');
+
     const [isDark, setDarkState] = useState<boolean>(currentTheme ? JSON.parse(currentTheme) : prefersDarkScheme);
+    const [show, setShow] = useState(false);
+
     document.body.classList.add(isDark ? 'dark' : 'light');
 
     if (!currentTheme) {
-        localStorage.setItem('theme', JSON.stringify(prefersDarkScheme));
+        localStorage.setItem('darkThemeEnabled', JSON.stringify(prefersDarkScheme));
     }
 
     function setDark() {
-        localStorage.setItem('theme', JSON.stringify(!isDark));
+        localStorage.setItem('darkThemeEnabled', JSON.stringify(!isDark));
         setDarkState((dark: boolean) => !dark);
         document.body.classList.toggle(isDark ? 'dark' : 'light');
     }
 
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/:id" element={<Server />} />
-            </Routes>
-        </BrowserRouter>
+        <ContentBoundary>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Home state={[show, setShow]} />} />
+                    <Route index path="/:id" element={<Redirect />} />
+                    <Route index path="/:id/:tab" element={<Server state={[show, setShow]} />} />
+                </Routes>
+            </BrowserRouter>
+        </ContentBoundary>
     );
 }

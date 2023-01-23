@@ -1,6 +1,14 @@
 import { Component, PropsWithChildren, ErrorInfo } from 'react';
 import styles from './ErrorBoundary.module.css';
 
+export const ErrorMessage: React.FC<{}> = () => (
+    <div className={styles.noticeBox}>
+        <div>
+            <h1 className="headingTwo textHeading">Something went wrong.</h1>
+            <p className="grey">Please try again. If this problem persits, inform the developers.</p>
+        </div>
+    </div>
+);
 export class ContentBoundary extends Component<PropsWithChildren, { hasError: boolean }> {
     constructor(props: PropsWithChildren) {
         super(props);
@@ -17,14 +25,7 @@ export class ContentBoundary extends Component<PropsWithChildren, { hasError: bo
 
     render() {
         if (this.state.hasError) {
-            return (
-                <div className={styles.noticeBox}>
-                    <div>
-                        <h1 className="headingTwo textHeading">Something went wrong.</h1>
-                        <p className="grey">Please try again. If this problem persits, inform the developers.</p>
-                    </div>
-                </div>
-            );
+            return <ErrorMessage />;
         }
 
         return this.props.children;

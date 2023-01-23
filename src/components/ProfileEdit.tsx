@@ -87,7 +87,7 @@ export default function ProfileEdit() {
     });
 
     return (
-        <div className={styles.paddedContainer}>
+        <div className="paddedContainer">
             {!data && <p>Loading your profile</p>}
             {data && 'errorReason' in data && <p>There was an error loading your profile, try again. </p>}
             {data && !('errorReason' in data) && (

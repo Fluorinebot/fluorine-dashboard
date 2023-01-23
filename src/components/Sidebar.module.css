@@ -1,6 +1,4 @@
 .sidebar {
-    min-height: 100vh;
-    max-height: 100vh;
     flex: 25%;
     background: var(--bg-secondary);
 }
@@ -10,7 +8,7 @@
     background: var(--brand-blue);
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-content: center;
 }
 
@@ -22,7 +20,49 @@
 .displayedContent {
     display: flow-root;
     padding: calc(var(--increment) * 2);
-    margin-top: calc(var(--increment) * 1.5);
     overflow-y: scroll;
     overflow-x: hidden;
+}
+
+@media (min-width: 768px) {
+    .sidebar {
+        min-height: 100vh;
+        max-height: 100vh;
+    }
+
+    .header {
+        justify-content: center;
+    }
+
+    .displayedContent {
+        margin-top: calc(var(--increment) * 1.5);
+    }
+}
+
+.mobileContent {
+    position: absolute;
+    top: 2%;
+    left: 2%;
+}
+
+.mobileContainer {
+    padding: calc(var(--increment) * 3);
+    background: var(--bg-secondary);
+    border-radius: calc(var(--increment) * 2);
+    width: 85vw;
+    max-height: 65vh;
+    overflow: scroll;
+}
+
+.blurContainer {
+    backdrop-filter: blur(0px);
+}
+
+.button {
+    background: none;
+    font-family: 'Poppins';
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
 }
