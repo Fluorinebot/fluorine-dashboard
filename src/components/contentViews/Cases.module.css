@@ -1,0 +1,31 @@
+.table {
+    width: 100%;
+    margin-top: calc(var(--increment) * 3);
+}
+
+thead > td {
+    color: var(--gray) !important;
+}
+
+tbody > *:nth-of-type(odd) {
+    background: var(--bg-secondary);
+}
+
+thead {
+    background: var(--bg-teritary);
+}
+
+tr {
+    border-radius: calc(var(--increment) * 2);
+}
+
+th,
+td {
+    padding: calc(var(--increment) * 1.25);
+}
+
+.wideTD {
+    background: var(--bg-secondary);
+    width: 100% !important;
+    padding: var(--increment);
+}

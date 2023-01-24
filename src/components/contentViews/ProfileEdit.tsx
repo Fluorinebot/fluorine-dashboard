@@ -1,6 +1,6 @@
 import { useFormik } from 'formik';
-import { BASE_URI } from '../lib/constants';
-import { useFetch } from '../lib/useFetch';
+import { BASE_URI } from '../../lib/constants';
+import { useFetch } from '../../lib/useFetch';
 import styles from './ProfileEdit.module.css';
 
 interface Profile {
@@ -17,16 +17,16 @@ const validate = async ({ description, location, birthday, pronouns, website }: 
 
     if (description && description.length > 300) {
         errors.description = `Description must be less than 300 characters. You're off by ${
-            description.length - 15
+            description.length - 300
         } character(s).`;
     }
 
     if (location) {
-        if (location.length <= 3) {
+        if (location.length < 3) {
             errors.location = 'Location must be more than 3 characters.';
         }
 
-        if (location.length >= 15) {
+        if (location.length > 15) {
             errors.location = `Location must be less than 15 characters. You're off by ${
                 location.length - 15
             } character(s).`;
@@ -73,11 +73,17 @@ export default function ProfileEdit() {
         },
         onSubmit: (values, actions) => {
             setTimeout(async () => {
-                await fetch(`${BASE_URI}/profile`, {
+                const patch = await fetch(`${BASE_URI}/profile`, {
                     credentials: 'include',
                     method: 'PATCH',
                     body: JSON.stringify(values)
+                }).catch(err => {
+                    throw new Error(err.message);
                 });
+
+                if (patch.status >= 500) {
+                    throw new Error('Patch fail');
+                }
 
                 actions.setSubmitting(false);
             }, 1000);

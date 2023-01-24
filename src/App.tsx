@@ -6,7 +6,7 @@ import Server from './routes/Server';
 
 const Redirect: React.FC<{}> = () => {
     const params = useParams();
-    return <Navigate to={`/${params.id}/general`} />;
+    return <Navigate to={`/${params.id}/cases`} />;
 };
 
 export default function App() {
@@ -35,6 +35,7 @@ export default function App() {
                     <Route path="/" element={<Home state={[show, setShow]} />} />
                     <Route index path="/:id" element={<Redirect />} />
                     <Route index path="/:id/:tab" element={<Server state={[show, setShow]} />} />
+                    <Route index path="/:id/:tab/:itemId" element={<Server state={[show, setShow]} />} />
                 </Routes>
             </BrowserRouter>
         </ContentBoundary>

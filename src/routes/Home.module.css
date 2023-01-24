@@ -5,5 +5,13 @@
 
     .fullFlex {
         flex: 75%;
+        max-height: 100vh;
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+
+    .fullFlex > * > p,
+    .fullFlex > p {
+        width: 75%;
     }
 }

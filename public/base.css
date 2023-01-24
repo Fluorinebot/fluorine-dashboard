@@ -49,9 +49,6 @@ body {
 
     min-width: 425px;
     font-size: calc(var(--increment) * 2.25);
-}
-
-.root {
     overflow: clip;
 }
 
@@ -77,6 +74,7 @@ h6 {
     cursor: pointer;
     color: var(--text-color);
     margin-left: 0 !important;
+    text-align: center;
 }
 
 .ctaButton::hover {
@@ -100,6 +98,7 @@ h6 {
     cursor: pointer;
     color: var(--text-color);
     margin-left: 0 !important;
+    text-align: center;
 }
 
 .headingOne {
@@ -181,10 +180,18 @@ form {
 
     .desktopHidden {
         visibility: hidden;
+        display: none;
     }
 
     input[type='text'],
     textarea {
-        width: 75%;
+        width: 50vw;
     }
+}
+
+.noticeBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: scroll;
 }

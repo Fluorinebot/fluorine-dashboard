@@ -1,52 +1,57 @@
+import { FaArrowUp } from '@react-icons/all-files/fa/FaArrowUp';
+import { FaBars } from '@react-icons/all-files/fa/FaBars';
 import { Link } from 'react-router-dom';
 import { AsideBoundary } from './ErrorBoundary';
-import GuildList from './GuildList';
 import styles from './Sidebar.module.css';
+import GuildList from './sidebarViews/GuildList';
+import TabsList from './sidebarViews/TabsList';
 
 export default function Sidebar({
     listing,
     state,
-    selectedTab
+    optionsData
 }: {
     listing: 'guilds' | 'options';
     state: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-    selectedTab?: string;
+    optionsData?: {
+        name: string;
+        tab?: string;
+        id?: string;
+        icon?: string;
+        isGuildBackURI?: boolean;
+    };
 }) {
     let JSXReturn;
 
     if (listing === 'guilds') {
         JSXReturn = <GuildList />;
     } else {
-        JSXReturn = (
-            <Link to="/" className="primaryButton">
-                Back
-            </Link>
-        );
+        JSXReturn = <TabsList {...optionsData} />;
     }
 
     return (
         <>
-            <nav className={`${styles.sidebar} mobileHidden`}>
-                <div className={styles.header}>
-                    <h1 className={`${styles.headerText} headingOne`}>Fluorine</h1>
-                </div>
-                <div className={styles.displayedContent}>
+            <div className={`${styles.sidebar} mobileHidden`}>
+                <header className={styles.header}>
+                    <Link to="/">
+                        <h1 className={`${styles.headerText} headingOne`}>Fluorine</h1>
+                    </Link>
+                </header>
+                <nav className={styles.displayedContent}>
                     <AsideBoundary>{JSXReturn}</AsideBoundary>
-                </div>
-            </nav>
-            <nav className="desktopHidden">
+                </nav>
+            </div>
+            <header className="desktopHidden">
                 <div className={styles.header}>
                     <h1 className={`${styles.headerText} headingOne`}>Fluorine</h1>
                     <button onClick={() => state[1](curr => !curr)} className={styles.button}>
-                        {state[0] ? '(back)' : '(three bars)'}
+                        {state[0] ? <FaArrowUp /> : <FaBars />}
                     </button>
                 </div>
-            </nav>
+            </header>
             {state[0] && (
                 <div className="paddedContainer">
-                    <div className="blurContainer">
-                        <AsideBoundary>{JSXReturn}</AsideBoundary>
-                    </div>
+                    <AsideBoundary>{JSXReturn}</AsideBoundary>
                 </div>
             )}
         </>

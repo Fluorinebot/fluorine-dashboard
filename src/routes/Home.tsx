@@ -1,5 +1,5 @@
 import { ContentBoundary } from '../components/ErrorBoundary';
-import ProfileEdit from '../components/ProfileEdit';
+import ProfileEdit from '../components/contentViews/ProfileEdit';
 import Sidebar from '../components/Sidebar';
 import styles from './Home.module.css';
 

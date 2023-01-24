@@ -1,44 +1,58 @@
-import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ContentBoundary, ErrorMessage } from '../components/ErrorBoundary';
+import { Case } from '../components/contentViews/Case';
+import Cases from '../components/contentViews/Cases';
+import { ContentBoundary } from '../components/ErrorBoundary';
 import Sidebar from '../components/Sidebar';
 import { BASE_URI } from '../lib/constants';
 import { useFetch } from '../lib/useFetch';
 import styles from './Home.module.css';
 
-const getIcon = (x: any) =>
-    x.icon
-        ? `https://cdn.discordapp.com/icons/${x.id}/${x.icon}.${x.icon.endsWith('_a') ? 'gif' : 'webp'}?size=48`
-        : `https://cdn.discordapp.com/embed/avatars/${BigInt(x.id) % BigInt(5)}.png?size=48`;
-
 export default function Server({ state }: { state: [boolean, React.Dispatch<React.SetStateAction<boolean>>] }) {
     const params = useParams();
-    const tab = params.tab === '' ? 'general' : params.tab;
 
     const data = useFetch<any>(`${BASE_URI}/guilds/${params.id}`, { method: 'GET' });
     let JSXReturn;
 
     if (!data) {
-        JSXReturn = <p>Loading your servers</p>;
+        JSXReturn = <p>Loading this server</p>;
     }
 
     if (data && 'error' in data) {
-        console.log(data.error, data.errorReason);
-        JSXReturn = <p>There was an error loading your servers, try again. </p>;
+        JSXReturn = <p>There was an error loading this server, try again. Perhaps it doesn't exist?</p>;
     }
 
     if (data && !('error' in data)) {
-        JSXReturn = (
-            <>
-                <code>{JSON.stringify(data, null, 4)}</code>
-                <p>{tab}</p>
-            </>
-        );
+        // const tabDisplay = {
+        //     cases: <Cases id={params.id} />
+        // } as const;
+
+        // JSXReturn = tabDisplay[(params.tab ?? 'cases') as keyof typeof tabDisplay];
+        if (params.tab === 'cases') {
+            JSXReturn = <Cases id={params.id} />;
+
+            if (params.itemId) {
+                JSXReturn = <Case id={params.id} caseId={params.itemId} />;
+            }
+        }
     }
 
     return (
         <div className={styles.home}>
-            <Sidebar listing="options" selectedTab={params.tab} state={state} />
+            {data && !('error' in data) ? (
+                <Sidebar
+                    listing="options"
+                    state={state}
+                    optionsData={{
+                        name: data.name ?? '',
+                        id: params.id ?? '',
+                        icon: data.icon ?? '',
+                        tab: params.tab,
+                        isGuildBackURI: Boolean(params.itemId)
+                    }}
+                />
+            ) : (
+                <Sidebar listing="options" state={state} />
+            )}
             <div className={styles.fullFlex}>
                 {!state[0] && (
                     <ContentBoundary>

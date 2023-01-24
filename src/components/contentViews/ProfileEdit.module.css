@@ -17,3 +17,8 @@
     resize: none;
     height: calc(var(--increment) * 16);
 }
+
+.selected {
+    color: var(--text-color);
+    background: var(--brand-blue) !important;
+}

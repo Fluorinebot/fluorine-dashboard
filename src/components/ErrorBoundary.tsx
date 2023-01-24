@@ -1,8 +1,7 @@
 import { Component, PropsWithChildren, ErrorInfo } from 'react';
-import styles from './ErrorBoundary.module.css';
 
 export const ErrorMessage: React.FC<{}> = () => (
-    <div className={styles.noticeBox}>
+    <div className="noticeBox">
         <div>
             <h1 className="headingTwo textHeading">Something went wrong.</h1>
             <p className="grey">Please try again. If this problem persits, inform the developers.</p>

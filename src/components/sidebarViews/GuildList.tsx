@@ -1,7 +1,6 @@
 import { APIGuild } from 'discord-api-types/v10';
-import { Link } from 'react-router-dom';
-import { BASE_URI, CLIENT_ID } from '../lib/constants';
-import { useFetch } from '../lib/useFetch';
+import { BASE_URI, CLIENT_ID } from '../../lib/constants';
+import { useFetch } from '../../lib/useFetch';
 import styles from './GuildList.module.css';
 
 const isAllowed = (x: APIGuild & { fluorine: boolean }) =>
@@ -17,7 +16,7 @@ function GuildCard({ guild }: { guild: APIGuild & { fluorine: boolean } }) {
         <a
             href={
                 guild.fluorine
-                    ? `/${guild.id}/general`
+                    ? `/${guild.id}/cases`
                     : `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&scope=bot+applications.commands&permissions=1374389881878&guild_id=${guild.id}`
             }
             className={styles.card}
