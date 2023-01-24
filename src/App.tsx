@@ -1,43 +1,34 @@
-import { useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useParams } from 'react-router-dom';
-import { ContentBoundary } from './components/ErrorBoundary';
-import Home from './routes/Home';
-import GuildView from './routes/GuildView';
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import './App.css'
 
-const Redirect: React.FC<{}> = () => {
-    const params = useParams();
-    return <Navigate to={`/${params.id}/cases`} />;
-};
+function App() {
+  const [count, setCount] = useState(0)
 
-export default function App() {
-    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const currentTheme = localStorage.getItem('darkThemeEnabled');
-
-    const [isDark, setDarkState] = useState<boolean>(currentTheme ? JSON.parse(currentTheme) : prefersDarkScheme);
-    const [show, setShow] = useState(false);
-
-    document.body.classList.add(isDark ? 'dark' : 'light');
-
-    if (!currentTheme) {
-        localStorage.setItem('darkThemeEnabled', JSON.stringify(prefersDarkScheme));
-    }
-
-    function setDark() {
-        localStorage.setItem('darkThemeEnabled', JSON.stringify(!isDark));
-        setDarkState((dark: boolean) => !dark);
-        document.body.classList.toggle(isDark ? 'dark' : 'light');
-    }
-
-    return (
-        <ContentBoundary>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<Home state={[show, setShow]} />} />
-                    <Route index path="/:id" element={<Redirect />} />
-                    <Route index path="/:id/:tab" element={<GuildView state={[show, setShow]} />} />
-                    <Route index path="/:id/:tab/:itemId" element={<GuildView state={[show, setShow]} />} />
-                </Routes>
-            </BrowserRouter>
-        </ContentBoundary>
-    );
+  return (
+    <div className="App">
+      <div>
+        <a href="https://vitejs.dev" target="_blank">
+          <img src="/vite.svg" className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://reactjs.org" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
+      </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>
+          Edit <code>src/App.tsx</code> and save to test HMR
+        </p>
+      </div>
+      <p className="read-the-docs">
+        Click on the Vite and React logos to learn more
+      </p>
+    </div>
+  )
 }
+
+export default App
