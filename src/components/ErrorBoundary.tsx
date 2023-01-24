@@ -49,9 +49,11 @@ export class AsideBoundary extends Component<PropsWithChildren, { hasError: bool
     render() {
         if (this.state.hasError) {
             return (
-                <div>
-                    <h1 className="headingTwo textHeading">Something went wrong.</h1>
-                    <p className="grey">Please try again. If this problem persits, inform the developers.</p>
+                <div className="noticeBox">
+                    <div>
+                        <h1 className="headingTwo textHeading">Something went wrong.</h1>
+                        <p className="grey">Please try again. If this problem persits, inform the developers.</p>
+                    </div>
                 </div>
             );
         }
@@ -62,15 +64,17 @@ export class AsideBoundary extends Component<PropsWithChildren, { hasError: bool
 
 export function Authorize() {
     return (
-        <div>
-            <h2 className="headingTwo textHeading">You need to login.</h2>
-            <p className="moveFromButton">To continue, you must authorize with Discord.</p>
-            <a
-                href={`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify%20guilds`}
-                className="ctaButton"
-            >
-                Continue with Discord
-            </a>
+        <div className="noticeBox">
+            <div>
+                <h2 className="headingTwo textHeading">You need to login.</h2>
+                <p className="moveFromButton">To continue, you must authorize with Discord.</p>
+                <a
+                    href={`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify%20guilds`}
+                    className="ctaButton"
+                >
+                    Continue with Discord
+                </a>
+            </div>
         </div>
     );
 }
