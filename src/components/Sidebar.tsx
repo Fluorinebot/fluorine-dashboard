@@ -1,5 +1,6 @@
 import { FaArrowUp } from '@react-icons/all-files/fa/FaArrowUp';
 import { FaBars } from '@react-icons/all-files/fa/FaBars';
+import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { AsideBoundary } from './ErrorBoundary';
 import styles from './Sidebar.module.css';
@@ -49,11 +50,11 @@ export default function Sidebar({
                     </button>
                 </div>
             </header>
-            {state[0] && (
+            <div className={classNames('desktopHidden', { mobileHidden: !state[0] })}>
                 <div className="paddedContainer">
                     <AsideBoundary>{JSXReturn}</AsideBoundary>
                 </div>
-            )}
+            </div>
         </>
     );
 }

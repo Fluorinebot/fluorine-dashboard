@@ -180,7 +180,7 @@ form {
 
     .desktopHidden {
         visibility: hidden;
-        display: none;
+        display: none !important;
     }
 
     input[type='text'],

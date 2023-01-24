@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { ContentBoundary } from './components/ErrorBoundary';
 import Home from './routes/Home';
-import Server from './routes/Server';
+import GuildView from './routes/GuildView';
 
 const Redirect: React.FC<{}> = () => {
     const params = useParams();
@@ -34,8 +34,8 @@ export default function App() {
                 <Routes>
                     <Route path="/" element={<Home state={[show, setShow]} />} />
                     <Route index path="/:id" element={<Redirect />} />
-                    <Route index path="/:id/:tab" element={<Server state={[show, setShow]} />} />
-                    <Route index path="/:id/:tab/:itemId" element={<Server state={[show, setShow]} />} />
+                    <Route index path="/:id/:tab" element={<GuildView state={[show, setShow]} />} />
+                    <Route index path="/:id/:tab/:itemId" element={<GuildView state={[show, setShow]} />} />
                 </Routes>
             </BrowserRouter>
         </ContentBoundary>

@@ -1,5 +1,7 @@
 import { IconType } from '@react-icons/all-files';
 import { FaArrowLeft } from '@react-icons/all-files/fa/FaArrowLeft';
+import { FaCog } from '@react-icons/all-files/fa/FaCog';
+
 import { FaFile } from '@react-icons/all-files/fa/FaFile';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
@@ -72,9 +74,10 @@ export default function TabsList({
         { tabName: 'Back', tabURI: isGuildBackURI ? `/${id}` : `/`, tabIcon: FaArrowLeft },
         {
             tabName: 'Cases',
-            tabURI: `${id}/cases`,
+            tabURI: `/${id}/cases`,
             tabIcon: FaFile
-        }
+        },
+        { tabName: 'Logging Options', tabURI: `/${id}/logging`, tabIcon: FaCog }
     ];
 
     return (

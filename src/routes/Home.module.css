@@ -1,3 +1,9 @@
+.fullFlex {
+    max-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
 @media (min-width: 768px) {
     .home {
         display: flex;
@@ -5,9 +11,6 @@
 
     .fullFlex {
         flex: 75%;
-        max-height: 100vh;
-        overflow-x: hidden;
-        overflow-y: scroll;
     }
 
     .fullFlex > * > p,

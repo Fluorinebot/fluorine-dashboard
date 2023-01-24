@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useParams } from 'react-router-dom';
 import { Case } from '../components/contentViews/Case';
 import Cases from '../components/contentViews/Cases';
@@ -7,7 +8,7 @@ import { BASE_URI } from '../lib/constants';
 import { useFetch } from '../lib/useFetch';
 import styles from './Home.module.css';
 
-export default function Server({ state }: { state: [boolean, React.Dispatch<React.SetStateAction<boolean>>] }) {
+export default function GuildView({ state }: { state: [boolean, React.Dispatch<React.SetStateAction<boolean>>] }) {
     const params = useParams();
 
     const data = useFetch<any>(`${BASE_URI}/guilds/${params.id}`, { method: 'GET' });
@@ -22,17 +23,21 @@ export default function Server({ state }: { state: [boolean, React.Dispatch<Reac
     }
 
     if (data && !('error' in data)) {
-        // const tabDisplay = {
-        //     cases: <Cases id={params.id} />
-        // } as const;
-
-        // JSXReturn = tabDisplay[(params.tab ?? 'cases') as keyof typeof tabDisplay];
         if (params.tab === 'cases') {
             JSXReturn = <Cases id={params.id} />;
 
             if (params.itemId) {
                 JSXReturn = <Case id={params.id} caseId={params.itemId} />;
             }
+        } else {
+            JSXReturn = (
+                <div className="noticeBox">
+                    <div>
+                        <h2 className="headingTwo textHeading">That tab doesn't exist</h2>
+                        <p>Whatever link led you here, it's busted.</p>
+                    </div>
+                </div>
+            );
         }
     }
 
@@ -53,12 +58,10 @@ export default function Server({ state }: { state: [boolean, React.Dispatch<Reac
             ) : (
                 <Sidebar listing="options" state={state} />
             )}
-            <div className={styles.fullFlex}>
-                {!state[0] && (
-                    <ContentBoundary>
-                        <div className="paddedContainer">{JSXReturn}</div>
-                    </ContentBoundary>
-                )}
+            <div className={classNames(styles.fullFlex, { mobileHidden: state[0] })}>
+                <ContentBoundary>
+                    <div className="paddedContainer">{JSXReturn}</div>
+                </ContentBoundary>
             </div>
         </div>
     );
