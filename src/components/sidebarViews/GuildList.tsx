@@ -66,7 +66,11 @@ export default function GuildList() {
     }
 
     if (data && 'error' in data) {
-        JSXReturn = <p>There was an error loading your servers, try again. </p>;
+        if (['Missing token', 'Invalid token'].includes(data.error)) {
+            JSXReturn = <p>You must authorize to continue.</p>;
+        } else {
+            JSXReturn = <p>There was an error loading your servers, try again.</p>;
+        }
     }
 
     if (data && 'guilds' in data) {

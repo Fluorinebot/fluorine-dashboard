@@ -83,7 +83,8 @@ export default function TabsList({
     return (
         <div className={styles.flexContainer}>
             {!name && <p>Just a sec</p>}
-            {name && (
+            {name && id === 'FetchFail' && <p>You must authorize to continue.</p>}
+            {name && id !== 'FetchFail' && (
                 <>
                     <div className={styles.header}>
                         <img className={styles.cardImage} src={getIcon(id ?? '', icon)} alt="" />

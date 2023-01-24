@@ -1,4 +1,5 @@
 import { Component, PropsWithChildren, ErrorInfo } from 'react';
+import { CLIENT_ID, REDIRECT_URI } from '../lib/constants';
 
 export const ErrorMessage: React.FC<{}> = () => (
     <div className="noticeBox">
@@ -57,4 +58,19 @@ export class AsideBoundary extends Component<PropsWithChildren, { hasError: bool
 
         return this.props.children;
     }
+}
+
+export function Authorize() {
+    return (
+        <div>
+            <h2 className="headingTwo textHeading">You need to login.</h2>
+            <p className="moveFromButton">To continue, you must authorize with Discord.</p>
+            <a
+                href={`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify%20guilds`}
+                className="ctaButton"
+            >
+                Continue with Discord
+            </a>
+        </div>
+    );
 }

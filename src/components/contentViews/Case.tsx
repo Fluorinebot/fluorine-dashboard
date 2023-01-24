@@ -1,7 +1,5 @@
-import { Link } from 'react-router-dom';
 import { BASE_URI } from '../../lib/constants';
 import { useFetch } from '../../lib/useFetch';
-import styles from './Cases.module.css';
 
 interface CaseType {
     caseId: number;
@@ -10,16 +8,6 @@ interface CaseType {
     moderatedUser: string;
     type: 'warn' | 'ban' | 'timeout' | 'kick';
     reason: string;
-}
-
-function toTitleCase(str: string) {
-    return str
-        .toLowerCase()
-        .split(' ')
-        .map(word => {
-            return word.charAt(0).toUpperCase() + word.slice(1);
-        })
-        .join(' ');
 }
 
 export function CaseView({ id, data }: { id?: string; data: CaseType }) {

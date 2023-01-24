@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { useParams } from 'react-router-dom';
 import { Case } from '../components/contentViews/Case';
 import Cases from '../components/contentViews/Cases';
-import { ContentBoundary } from '../components/ErrorBoundary';
+import { Authorize, ContentBoundary } from '../components/ErrorBoundary';
 import Sidebar from '../components/Sidebar';
 import { BASE_URI } from '../lib/constants';
 import { useFetch } from '../lib/useFetch';
@@ -19,7 +19,11 @@ export default function GuildView({ state }: { state: [boolean, React.Dispatch<R
     }
 
     if (data && 'error' in data) {
-        JSXReturn = <p>There was an error loading this server, try again. Perhaps it doesn't exist?</p>;
+        if (['Missing token', 'Invalid token'].includes(data.error)) {
+            JSXReturn = <Authorize />;
+        } else {
+            JSXReturn = <p>There was an error loading this server, try again. Perhaps it doesn't exist?</p>;
+        }
     }
 
     if (data && !('error' in data)) {
@@ -31,11 +35,9 @@ export default function GuildView({ state }: { state: [boolean, React.Dispatch<R
             }
         } else {
             JSXReturn = (
-                <div className="noticeBox">
-                    <div>
-                        <h2 className="headingTwo textHeading">That tab doesn't exist</h2>
-                        <p>Whatever link led you here, it's busted.</p>
-                    </div>
+                <div>
+                    <h2 className="headingTwo textHeading">That tab doesn't exist</h2>
+                    <p>Whatever link led you here, it's busted.</p>
                 </div>
             );
         }
@@ -56,7 +58,7 @@ export default function GuildView({ state }: { state: [boolean, React.Dispatch<R
                     }}
                 />
             ) : (
-                <Sidebar listing="options" state={state} />
+                <Sidebar listing="options" state={state} optionsData={{ name: 'FetchFail', id: 'FetchFail' }} />
             )}
             <div className={classNames(styles.fullFlex, { mobileHidden: state[0] })}>
                 <ContentBoundary>
