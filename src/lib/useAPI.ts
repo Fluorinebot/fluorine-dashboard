@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
+import { ErrorType } from './types';
 
-const useAPI = <SuccessType, ErrorType = {}>(url: string, options: RequestInit = {}) => {
+const useAPI = <SuccessType, K = {}>(url: string, options: RequestInit = {}) => {
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<({ error?: string } & Record<string, any>) | ErrorType | undefined>();
-    const [data, setData] = useState<Partial<SuccessType> | undefined>();
+    const [error, setError] = useState<ErrorType<K>>();
+    const [data, setData] = useState<SuccessType | undefined>();
+    const [code, setCode] = useState<number>(0);
 
     useEffect(() => {
+        let ignore = false;
+
         fetch(url, { credentials: 'include', ...options })
             .then(res => {
+                setCode(res.status);
                 if (res.ok) {
                     return res.json();
                 }
@@ -16,16 +21,20 @@ const useAPI = <SuccessType, ErrorType = {}>(url: string, options: RequestInit =
             })
             .then(resData => setData(resData))
             .catch(err => {
-                console.error(error);
                 setError(err?.message ? { error: err.message } : err);
             })
             .finally(() => setLoading(false));
+
+        return () => {
+            ignore = true;
+        };
     }, []);
 
     return {
         loading,
         error,
-        data
+        data,
+        code
     };
 };
 

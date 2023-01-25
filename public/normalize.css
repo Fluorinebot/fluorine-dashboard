@@ -183,3 +183,7 @@ template {
 ul {
     list-style-type: none;
 }
+
+a {
+    color: var(--text-color);
+}

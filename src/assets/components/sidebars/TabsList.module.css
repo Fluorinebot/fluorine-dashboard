@@ -64,3 +64,13 @@
     display: flex;
     flex-direction: column;
 }
+
+.selected {
+    background: var(--brand-blue);
+    color: var(--tex-color);
+}
+
+.selected:hover {
+    box-shadow: var(--drop-shadow);
+    color: var(--text-color);
+}

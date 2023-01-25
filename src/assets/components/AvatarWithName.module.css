@@ -1,0 +1,19 @@
+.name {
+    flex: 75%;
+}
+
+.avatarFlex {
+    display: flex;
+    justify-content: start;
+}
+
+.avatar {
+    border-radius: 50%;
+    margin-right: calc(var(--increment) * 2);
+    height: 32px;
+    width: 32px;
+}
+
+.marginAuto {
+    margin: auto 0;
+}

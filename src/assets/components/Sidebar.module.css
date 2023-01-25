@@ -1,0 +1,59 @@
+.sidebar {
+    flex: 25%;
+    background: var(--bg-secondary);
+}
+
+.header {
+    padding: calc(var(--increment) * 2);
+    background: var(--brand-blue);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.headerText {
+    color: var(--light-border);
+    text-shadow: var(--shadow);
+}
+
+.displayedContent {
+    display: flow-root;
+    padding: calc(var(--increment) * 2.25);
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+    .sidebar {
+        height: 100vh;
+    }
+
+    .header {
+        justify-content: center;
+    }
+}
+
+.mobileContent {
+    position: absolute;
+    top: 2%;
+    left: 2%;
+}
+
+.mobileContainer {
+    padding: calc(var(--increment) * 3);
+    background: var(--bg-secondary);
+    border-radius: calc(var(--increment) * 2);
+    width: 85vw;
+    max-height: 65vh;
+    overflow: auto;
+}
+
+.button {
+    background: none;
+    font-family: 'Poppins';
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+}
