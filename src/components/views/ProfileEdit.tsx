@@ -2,7 +2,7 @@ import { useFormik } from 'formik';
 import { BASE_URI } from '#/lib/constants';
 import useAPI from '#/lib/useAPI';
 import { Authorize } from '#/components/ErrorBoundary';
-import styles from '#/assets/components/views/ProfileEdit.module.css';
+import '#/assets/components/views/ProfileEdit.css';
 import type { Profile } from '#/lib/types';
 
 const validate = async ({ description, location, birthday, pronouns, website }: Profile) => {
@@ -100,77 +100,81 @@ export default function ProfileEdit() {
     if (data || (error && code !== 404)) {
         return (
             <div>
-                <h2 className="headingTwo textHeading">Your Profile</h2>
+                <h2 className="Utils__Leading">Your Profile</h2>
                 <p>Change your profile here.</p>
-                <form onSubmit={formik.handleSubmit}>
-                    <div className={styles.formField}>
-                        <label className={styles.formLabel}>Description</label>
+                <form className="Form" onSubmit={formik.handleSubmit}>
+                    <div className="Form__Field">
+                        <label className="Form__Label">Description</label>
                         <textarea
                             name="description"
                             value={formik.values.description}
                             onChange={formik.handleChange}
-                            className={styles.textarea}
+                            className="Form__TextInput"
                         />
                         {formik.touched.description && formik.errors.description ? (
-                            <p className={styles.error}>{formik.errors.description}</p>
+                            <p className="Form__Error">{formik.errors.description}</p>
                         ) : null}
                     </div>
 
-                    <div className={styles.formField}>
-                        <label className={styles.formLabel}>Pronouns</label>
+                    <div className="Form__Field">
+                        <label className="Form__Label">Pronouns</label>
                         <input
                             name="pronouns"
                             type="text"
                             value={formik.values.pronouns}
                             onChange={formik.handleChange}
+                            className="Form__TextInput"
                         />
                         {formik.touched.pronouns && formik.errors.pronouns ? (
-                            <p className={styles.error}>{formik.errors.pronouns}</p>
+                            <p className="Form__Error">{formik.errors.pronouns}</p>
                         ) : null}
                     </div>
 
-                    <div className={styles.formField}>
-                        <label className={styles.formLabel}>Birthday</label>
+                    <div className="Form__Field">
+                        <label className="Form__Label">Birthday</label>
                         <input
                             name="birthday"
                             type="text"
                             value={formik.values.birthday}
                             onChange={formik.handleChange}
+                            className="Form__TextInput"
                         />
                         {formik.touched.birthday && formik.errors.birthday ? (
-                            <p className={styles.error}>{formik.errors.birthday}</p>
+                            <p className="Form__Error">{formik.errors.birthday}</p>
                         ) : null}
                     </div>
 
-                    <div className={styles.formField}>
-                        <label className={styles.formLabel}>Website</label>
+                    <div className="Form__Field">
+                        <label className="Form__Label">Website</label>
                         <input
                             name="website"
                             type="text"
                             value={formik.values.website}
                             onChange={formik.handleChange}
+                            className="Form__TextInput"
                         />
                         {formik.touched.website && formik.errors.website ? (
-                            <p className={styles.error}>{formik.errors.website}</p>
+                            <p className="Form__Error">{formik.errors.website}</p>
                         ) : null}
                     </div>
 
-                    <div className={styles.formField}>
-                        <label className={styles.formLabel}>Location</label>
+                    <div className="Form__Field">
+                        <label className="Form__Label">Location</label>
                         <input
                             name="location"
                             type="text"
                             value={formik.values.location}
                             onChange={formik.handleChange}
+                            className="Form__TextInput"
                         />
                         {formik.touched.location && formik.errors.location ? (
-                            <p className={styles.error}>{formik.errors.location}</p>
+                            <p className="Form__Error">{formik.errors.location}</p>
                         ) : null}
                     </div>
 
                     <button
                         type="submit"
-                        className="ctaButton"
+                        className="Button Button--Primary"
                         disabled={formik.isSubmitting ? formik.isSubmitting : !formik.dirty}
                     >
                         {formik.isSubmitting ? 'Saving changes...' : 'Save changes'}

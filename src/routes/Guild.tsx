@@ -1,4 +1,3 @@
-import styles from '#/assets/routes/Route.module.css';
 import { Authorize } from '#/components/ErrorBoundary';
 import Sidebar from '#/components/Sidebar';
 import TabsList from '#/components/sidebars/TabsList';
@@ -32,7 +31,7 @@ const Guild: React.FC<{ contentShownState: [boolean, React.Dispatch<React.SetSta
             jsx = (
                 <div className="noticeBox">
                     <div>
-                        <h2 className="leading">Not Found</h2>
+                        <h2 className="Utils__Leading">Not Found</h2>
                         <p>Either that server doesn't exist or does not have Fluorine.</p>
                     </div>
                 </div>
@@ -51,7 +50,7 @@ const Guild: React.FC<{ contentShownState: [boolean, React.Dispatch<React.SetSta
     }
 
     return (
-        <div className={styles.home}>
+        <div className="Utils__Home">
             <Sidebar contentShownState={[showContent, setContentShown]}>
                 <TabsList data={data} error={error} loading={loading} code={code} id={params.id} />
             </Sidebar>
@@ -59,8 +58,8 @@ const Guild: React.FC<{ contentShownState: [boolean, React.Dispatch<React.SetSta
             {renderContent && (
                 <main
                     className={classNames({
-                        [styles.fullFlex]: !isCasesView,
-                        [styles.lockScroll]: isCasesView
+                        Utils__FullFlex: !isCasesView,
+                        Utils__LockScrolling: isCasesView
                     })}
                 >
                     {jsx}

@@ -1,9 +1,9 @@
+import '#/assets/components/sidebars/TabsList.css';
+import { ErrorType } from '#/lib/types';
+import classNames from 'classnames';
 import { IconType } from 'react-icons';
 import { FaArrowLeft, FaCog, FaFile } from 'react-icons/fa';
-import classNames from 'classnames';
-import { Link, useLocation, useParams } from 'react-router-dom';
-import styles from '#/assets/components/sidebars/TabsList.module.css';
-import { ErrorType } from '#/lib/types';
+import { Link, useLocation } from 'react-router-dom';
 
 interface TabProps {
     tabName: string;
@@ -18,42 +18,12 @@ const getIcon = (id: string, icon?: string) =>
 
 function Tab({ tabName, tabURI, selected, ...props }: TabProps & { selected: boolean }) {
     return (
-        <Link to={tabURI} className={classNames(styles.card, { [styles.selected]: selected })}>
-            <props.tabIcon className={styles.icon} />
-            <div className={styles.cardText}>
-                <h5 className="headingSix">{tabName}</h5>
-            </div>
+        <Link to={tabURI} className={classNames('TabCard', { 'TabCard--Selected': selected })}>
+            <props.tabIcon className="TabCard__Icon" />
+            <h5 className="TabCard__Text">{tabName}</h5>
         </Link>
     );
 }
-
-// function Guilds({
-//     header,
-//     data,
-//     hasFluorine
-// }: {
-//     header: string;
-//     data: (APIGuild & { fluorine: boolean })[];
-//     hasFluorine: boolean;
-// }) {
-//     return (
-//         <div className={styles.padded}>
-//             <h3 className={`${styles.lessPadded} ${hasFluorine ? styles.fullFlex : ''}`}>{header}</h3>
-//             <div>
-//                 {data
-//                     .filter(x => (hasFluorine ? x.fluorine : !x.fluorine))
-//                     .sort((x, y) => {
-//                         if (x.name.toLowerCase() < y.name.toLowerCase()) return -1;
-//                         if (x.name.toLowerCase() > y.name.toLowerCase()) return 1;
-//                         return 0;
-//                     })
-//                     .map(guild => (
-//                         <GuildCard key={guild.id} guild={guild} />
-//                     ))}
-//             </div>
-//         </div>
-//     );
-// }
 
 export default function TabsList({
     loading,
@@ -99,10 +69,10 @@ export default function TabsList({
             {loading && <p>Just a sec</p>}
             {error && <p>You must authorize to continue.</p>}
             {data && (
-                <div className={styles.flexContainer}>
-                    <div className={styles.header}>
-                        <img className={styles.cardImage} src={getIcon(id ?? '', data.icon)} alt="" />
-                        <h2 className={`headingOne ${styles.cardText}`}>{data.name}</h2>
+                <div className="TabsList__Flex">
+                    <div className="TabsList__Header">
+                        <img className="Header__Image" src={getIcon(id ?? '', data.icon)} alt="" />
+                        <h2 className="Header__Text">{data.name}</h2>
                     </div>
                     <nav>
                         {tabs.map(item => (

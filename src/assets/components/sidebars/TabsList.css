@@ -1,23 +1,24 @@
-.padded {
-    padding-bottom: calc(var(--increment) * 3);
+.TabsList__Flex {
+    display: flex;
+    flex-direction: column;
 }
 
-.lessPadded {
-    color: var(--grey);
-}
-
-.header {
+.TabsList__Header {
     display: flex;
     padding: calc(var(--increment) * 2);
     align-content: center;
     margin-top: var(--increment);
     margin-bottom: var(-increment);
-    transition-property: all;
-    transition-timing-function: linear;
-    transition-duration: 150ms;
 }
 
-.card {
+.Header__Image {
+    border-radius: 50%;
+    margin-right: calc(var(--increment) * 2);
+    height: 48px;
+    width: 48px;
+}
+
+.TabCard {
     display: flex;
     padding: calc(var(--increment) * 1.5);
     align-content: center;
@@ -30,47 +31,27 @@
     transition-duration: 150ms;
 }
 
-.cardImage {
-    border-radius: 50%;
-    margin-right: calc(var(--increment) * 2);
-    height: 48px;
-    width: 48px;
-}
-
-.icon {
+.TabCard__Icon {
     margin-right: calc(var(--increment) * 2);
     height: 32px;
     width: 32px;
 }
 
-.cardText {
-    margin: auto 0;
-}
-
-.cardId {
-    color: var(--grey);
-    font-size: calc(var(--increment) * 1.75);
-}
-
-.card:hover {
+.TabCard:hover {
     color: var(--brand-blue);
 }
 
-.fullFlex {
-    flex: 1;
-}
-
-.flexContainer {
-    display: flex;
-    flex-direction: column;
-}
-
-.selected {
+.TabCard--Selected {
     background: var(--brand-blue);
     color: var(--tex-color);
 }
 
-.selected:hover {
+.TabCard--Selected:hover {
     box-shadow: var(--drop-shadow);
     color: var(--text-color);
+}
+
+.TabCard__Text,
+.Header__Text {
+    margin: auto 0;
 }
