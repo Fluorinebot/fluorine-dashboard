@@ -203,3 +203,48 @@ form {
 .poppins {
     font-family: Poppins;
 }
+
+.Modal__Container {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    height: 100vh;
+    width: 100vw;
+
+    overflow-y: hidden;
+    overflow-x: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1002;
+
+    background: #00000010;
+}
+
+.Modal__Overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ModalCard {
+    border-radius: calc(var(--increment) * 4) !important;
+    width: 35vw;
+}
+
+.ModalCard__Text {
+    background: var(--bg-primary);
+    padding: calc(var(--increment) * 2);
+}
+
+.ModalCard__Buttons {
+    background: var(--bg-secondary);
+    padding: var(--increment) calc(var(--increment) * 2);
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
