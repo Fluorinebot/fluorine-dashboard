@@ -1,7 +1,7 @@
 import { APIGuild } from 'discord-api-types/v10';
 import { BASE_URI, CLIENT_ID } from '#/lib/constants';
 import useAPI from '#/lib/useAPI';
-import styles from '#/assets/components/sidebars/GuildList.module.css';
+import '#/assets/components/sidebars/GuildList.css';
 
 const isAllowed = (x: APIGuild & { fluorine: boolean }) =>
     (Number(x.permissions) & 0x8) === 0x8 || (Number(x.permissions) & 0x20) === 32;
@@ -19,10 +19,10 @@ function GuildCard({ guild }: { guild: APIGuild & { fluorine: boolean } }) {
                     ? `/guilds/${guild.id}/cases`
                     : `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&scope=bot+applications.commands&permissions=1374389881878&guild_id=${guild.id}`
             }
-            className={styles.card}
+            className="GuildCard"
         >
-            <img className={styles.cardImage} src={getIcon(guild)} alt="" />
-            <div className={styles.cardText}>
+            <img className="GuildCard__Image" src={getIcon(guild)} alt="" />
+            <div className="GuildCard__Text">
                 <h5>{guild.name}</h5>
             </div>
         </a>
@@ -39,8 +39,8 @@ function Guilds({
     hasFluorine: boolean;
 }) {
     return (
-        <div className={styles.padded}>
-            <h6 className={`${styles.lessPadded} ${hasFluorine ? styles.fullFlex : ''}`}>{header}</h6>
+        <div className="Utils__Leading">
+            <h6 className="Utils__Grey">{header}</h6>
             <div>
                 {data
                     .filter(x => (hasFluorine ? x.fluorine : !x.fluorine))

@@ -1,7 +1,7 @@
+import '#/assets/components/AvatarWithName.css';
 import { BASE_URI } from '#/lib/constants';
 import type { User } from '#/lib/types';
 import useAPI from '#/lib/useAPI';
-import styles from '#/assets/components/AvatarWithName.module.css';
 
 const getIcon = (id: string, tag: string, icon?: string) => {
     const parsed = tag.split('#');
@@ -26,9 +26,9 @@ const AvatarWithName: React.FC<{ guildId: string; userId: string }> = ({ guildId
 
     if (data) {
         return (
-            <div className={`${styles.avatarFlex} ${styles.name}`}>
-                <img className={styles.avatar} src={getIcon(userId, data.tag, data.avatar)} />
-                <p className={styles.marginAuto}>
+            <div className="Avatar Utils__Flex--75">
+                <img className="Avatar__Image" src={getIcon(userId, data.tag, data.avatar)} />
+                <p className="Avatar__Text">
                     <b>{data.nickname ? `${data.nickname} (${data.tag})` : data.tag}</b>
                 </p>
             </div>

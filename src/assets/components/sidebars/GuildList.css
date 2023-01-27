@@ -1,16 +1,8 @@
-.padded {
-    padding-bottom: calc(var(--increment) * 3);
-}
-
-.lessPadded {
-    color: var(--grey);
-}
-
-.card {
+.GuildCard {
     display: flex;
     padding: calc(var(--increment) * 2);
     align-content: center;
-    background: var(--bg-teritary);
+    background: var(--background-teritary);
     border-radius: calc(var(--increment) * 2);
     margin-top: var(--increment);
     margin-bottom: var(-increment);
@@ -19,31 +11,17 @@
     transition-duration: 150ms;
 }
 
-.cardImage {
+.GuildCard__Image {
     border-radius: 50%;
     margin-right: calc(var(--increment) * 2);
     height: 48px;
     width: 48px;
 }
 
-.cardText {
+.GuildCard__Text {
     margin: auto 0;
 }
 
-.cardId {
-    color: var(--grey);
-    font-size: calc(var(--increment) * 1.75);
-}
-
-.card:hover {
+.GuildCard:hover {
     color: var(--brand-blue);
-}
-
-.fullFlex {
-    flex: 1;
-}
-
-.flexContainer {
-    display: flex;
-    flex-direction: column;
 }

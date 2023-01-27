@@ -1,5 +1,4 @@
 import Sidebar from '#/components/Sidebar';
-import styles from '#/assets/routes/Route.module.css';
 import { useMediaQuery } from 'react-responsive';
 import GuildList from '#/components/sidebars/GuildList';
 import ProfileEdit from '#/components/views/ProfileEdit';
@@ -11,13 +10,13 @@ const Home: React.FC<{ contentShownState: [boolean, React.Dispatch<React.SetStat
     const renderContent = (isMobile && showContent) || !isMobile;
 
     return (
-        <div className={styles.home}>
+        <div className="Utils__Home">
             <Sidebar contentShownState={[showContent, setContentShown]}>
                 <GuildList />
             </Sidebar>
 
             {renderContent && (
-                <main className={`${styles.fullFlex} container`}>
+                <main className="Utils__FullFlex Utils__Container">
                     <ProfileEdit />
                 </main>
             )}

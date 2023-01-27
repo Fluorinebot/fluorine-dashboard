@@ -1,0 +1,44 @@
+.DisplayedContent {
+    display: flow-root;
+    padding: calc(var(--increment) * 2.25);
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.Sidebar {
+    flex: 25%;
+    background: var(--background-secondary);
+}
+
+.Header {
+    padding: calc(var(--increment) * 2);
+    background: var(--brand-blue);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.Header__Text {
+    color: var(--light-border);
+    text-shadow: var(--shadow);
+}
+
+.Header__Button {
+    background: none;
+    font-family: 'Poppins';
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+@media (min-width: 768px) {
+    .Sidebar {
+        height: 100vh;
+    }
+
+    .Header {
+        justify-content: center;
+    }
+}
