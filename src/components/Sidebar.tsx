@@ -12,23 +12,10 @@ const Sidebar: React.FC<{
     return (
         <>
             {isMobile ? (
-                <>
-                    <header className="Header">
-                        <h1 className="Header__Text">Fluorine</h1>
-                        <button onClick={() => setContentShown(curr => !curr)} className="Header__Button">
-                            {!showContent ? <FaArrowUp /> : <FaBars />}
-                        </button>
-                    </header>
-                    {!showContent && <nav className="Utils__Container">{children}</nav>}
-                </>
+                <>{!showContent && <nav className="Utils__Container">{children}</nav>}</>
             ) : (
                 <>
                     <aside className="Sidebar">
-                        <header className="Header">
-                            <Link to="/">
-                                <h1 className="Header__Text">Fluorine</h1>
-                            </Link>
-                        </header>
                         <nav className="DisplayedContent">{children}</nav>
                     </aside>
                 </>
