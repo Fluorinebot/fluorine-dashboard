@@ -97,7 +97,7 @@ export default function ProfileEdit() {
         return <p>There was an error loading your profile, try again.</p>;
     }
 
-    if (data || (error && code !== 404)) {
+    if (data || (error && code === 404)) {
         return (
             <div>
                 <h2 className="Utils__Leading">Your Profile</h2>
@@ -109,7 +109,7 @@ export default function ProfileEdit() {
                             name="description"
                             value={formik.values.description}
                             onChange={formik.handleChange}
-                            className="Form__TextInput"
+                            className="Form__TextInput Form__TextInput--Paragraph"
                         />
                         {formik.touched.description && formik.errors.description ? (
                             <p className="Form__Error">{formik.errors.description}</p>

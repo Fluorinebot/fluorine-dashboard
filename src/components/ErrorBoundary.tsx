@@ -70,7 +70,7 @@ export function Authorize() {
                 <p className="leading">To continue, you must authorize with Discord.</p>
                 <a
                     href={`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify%20guilds`}
-                    className="ctaButton"
+                    className="Button Button--Primary"
                 >
                     Continue with Discord
                 </a>

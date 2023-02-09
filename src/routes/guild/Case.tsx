@@ -1,4 +1,4 @@
-import styles from '#/assets/routes/guild/Cases.module.css';
+import styles from '#/assets/routes/guild/Cases.css';
 import AvatarWithName from '#/components/AvatarWithName';
 import { Authorize } from '#/components/ErrorBoundary';
 import { BASE_URI } from '#/lib/constants';

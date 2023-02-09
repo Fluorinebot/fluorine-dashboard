@@ -1,6 +1,7 @@
 .Avatar {
     display: flex;
     justify-content: start;
+    align-items: center;
 }
 
 .Avatar__Image {
@@ -8,8 +9,4 @@
     margin-right: calc(var(--increment) * 2);
     height: 32px;
     width: 32px;
-}
-
-.Avatar__Text {
-    margin: auto 0;
 }

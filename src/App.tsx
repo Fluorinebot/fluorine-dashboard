@@ -24,29 +24,16 @@ function App() {
                         />
                         <Route element={<Case />} path="/guilds/:id/cases/:item" />
                     </Route>
-                    {/* <Route
-                        element={
-                            <>
-                                <p>the funny with tabs</p> <Outlet />
-                            </>
-                        }
-                        path="/guilds/:id/:tab"
-                    >
-                        <Route index element={<p>the funny with an empty preview</p>} />
-                        <Route element={<p>the funny except we have item</p>} path="/guilds/:id/:tab/:item" />
-                    </Route> */}
                 </Route>
                 <Route
                     element={
-                        <div className="full">
-                            <div className="noticeBox">
-                                <div>
-                                    <h1 className="leading">Not found</h1>
-                                    <p className="leading">No such page exists.</p>
-                                    <Link to="/" className="ctaButton">
-                                        Go back
-                                    </Link>
-                                </div>
+                        <div className="Utils__TakeScreen">
+                            <div>
+                                <h1 className="leading">Not found</h1>
+                                <p className="leading">No such page exists.</p>
+                                <Link to="/" className="Button Button--Primary">
+                                    Go back
+                                </Link>
                             </div>
                         </div>
                     }

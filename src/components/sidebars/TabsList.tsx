@@ -41,6 +41,7 @@ export default function TabsList({
     id?: string;
 }) {
     const location = useLocation();
+    const currLocation = location.pathname.split('/')[3];
 
     const tabs: TabProps[] = [
         { tabName: 'Back', tabURI: isGuildBackURI ? `/guilds/${id}` : `/`, tabIcon: FaArrowLeft },
@@ -75,13 +76,16 @@ export default function TabsList({
                         <h2 className="Header__Text">{data.name}</h2>
                     </div>
                     <nav>
-                        {tabs.map(item => (
-                            <Tab
-                                {...item}
-                                key={item.tabName}
-                                selected={location.pathname.split('/')[3] === item.tabName.split(' ')[0].toLowerCase()}
-                            />
-                        ))}
+                        <ul>
+                            {tabs.map(item => (
+                                <li key={item.tabName}>
+                                    <Tab
+                                        {...item}
+                                        selected={currLocation === item.tabName.split(' ')[0].toLowerCase()}
+                                    />
+                                </li>
+                            ))}
+                        </ul>
                     </nav>
                 </div>
             )}

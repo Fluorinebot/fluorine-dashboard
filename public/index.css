@@ -64,7 +64,7 @@ body {
 }
 
 .Utils__Leading {
-    margin-bottom: calc(var(--increment) * 2);
+    margin-bottom: calc(var(--increment) * 1.5);
 }
 
 .Utils__Grey {
@@ -75,10 +75,17 @@ body {
     flex: 75%;
 }
 
-/* Route Utils */
+.Utils__TakeScreen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
+/* Route Utils */
 .Utils__FullFlex {
-    max-height: 100%;
+    max-height: 100vh;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -98,6 +105,14 @@ body {
     .Utils__LockScrolling {
         flex: 75%;
     }
+}
+
+.Utils__TextAlign {
+    margin: auto 0 !important;
+}
+
+.Utils__FluorineBlue {
+    color: var(--brand-blue);
 }
 
 /* Modals */
@@ -211,26 +226,45 @@ h6 {
     font-weight: 600;
 }
 
-input,
-textarea {
-    display: block;
-    margin-top: var(--increment) !important;
-}
-
-input[type='text'],
-textarea {
-    padding: calc(var(--increment) * 1.25);
-    border: none;
-    font-size: calc(var(--increment) * 2.25) !important;
-    width: 100%;
-    margin-top: var(--increment) !important;
-    margin-bottom: var(--increment) !important;
-    background: var(--background-teritary);
-    color: var(--text-primary);
-    border-radius: calc(var(--increment) * 1.5);
-}
-
-form {
+/* Forms */
+.Form {
     margin-top: calc(var(--increment) * 3) !important;
     margin-bottom: calc(var(--increment) * 3) !important;
+}
+
+.Form__Field {
+    margin-top: calc(var(--increment) * 1.75);
+    margin-bottom: calc(var(--increment) * 1.75);
+}
+
+.Form__Label {
+    color: var(--text-secondary);
+    font-size: calc(var(--increment) * 2);
+}
+
+.Form__Error {
+    font-size: calc(var(--increment) * 2);
+    color: var(--brand-red);
+}
+
+.Form__TextInput {
+    width: 100%;
+    display: block;
+
+    background: var(--background-teritary);
+    color: var(--text-primary);
+    font-size: calc(var(--increment) * 2.25) !important;
+
+    padding: calc(var(--increment) * 1.25);
+    margin-top: var(--increment) !important;
+    margin-bottom: var(--increment) !important;
+
+    border: none;
+    border-radius: calc(var(--increment) * 1.5);
+
+    resize: none;
+}
+
+.Form__TextInput--Paragraph {
+    height: calc(var(--increment) * 18);
 }

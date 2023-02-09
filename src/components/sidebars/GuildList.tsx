@@ -22,9 +22,7 @@ function GuildCard({ guild }: { guild: APIGuild & { fluorine: boolean } }) {
             className="GuildCard"
         >
             <img className="GuildCard__Image" src={getIcon(guild)} alt="" />
-            <div className="GuildCard__Text">
-                <h5>{guild.name}</h5>
-            </div>
+            <h5 className="GuildCard__Text">{guild.name}</h5>
         </a>
     );
 }
@@ -39,9 +37,9 @@ function Guilds({
     hasFluorine: boolean;
 }) {
     return (
-        <div className="Utils__Leading">
+        <section className="Utils__Leading">
             <h6 className="Utils__Grey">{header}</h6>
-            <div>
+            <ul>
                 {data
                     .filter(x => (hasFluorine ? x.fluorine : !x.fluorine))
                     .sort((x, y) => {
@@ -50,10 +48,12 @@ function Guilds({
                         return 0;
                     })
                     .map(guild => (
-                        <GuildCard key={guild.id} guild={guild} />
+                        <li key={guild.id}>
+                            <GuildCard guild={guild} />
+                        </li>
                     ))}
-            </div>
-        </div>
+            </ul>
+        </section>
     );
 }
 

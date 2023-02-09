@@ -21,6 +21,7 @@ const useAPI = <SuccessType, K = {}>(url: string, options: RequestInit = {}) => 
             })
             .then(resData => setData(resData))
             .catch(err => {
+                console.error(error);
                 setError(err?.message ? { error: err.message } : err);
             })
             .finally(() => setLoading(false));

@@ -10,7 +10,7 @@ const Home: React.FC<{ contentShownState: [boolean, React.Dispatch<React.SetStat
     const renderContent = (isMobile && showContent) || !isMobile;
 
     return (
-        <div className="Utils__Home">
+        <>
             <Sidebar contentShownState={[showContent, setContentShown]}>
                 <GuildList />
             </Sidebar>
@@ -20,7 +20,7 @@ const Home: React.FC<{ contentShownState: [boolean, React.Dispatch<React.SetStat
                     <ProfileEdit />
                 </main>
             )}
-        </div>
+        </>
     );
 };
 

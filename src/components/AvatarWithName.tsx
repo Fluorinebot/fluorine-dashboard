@@ -16,21 +16,35 @@ const getIcon = (id: string, tag: string, icon?: string) => {
 const AvatarWithName: React.FC<{ guildId: string; userId: string }> = ({ guildId, userId }) => {
     const { data, error, loading } = useAPI<User>(`${BASE_URI}/guilds/${guildId}/users/${userId}`);
 
-    if (loading) {
-        return <p>Loading</p>;
-    }
-
-    if (error) {
-        return <p>Unknown User</p>;
+    if (error || loading) {
+        return (
+            <div className="Avatar Utils__Flex--75">
+                <img className="Avatar__Image" src="https://cdn.discordapp.com/embed/avatars/5.png" />
+                <div>
+                    <span className="Utils__Grey">
+                        {loading && 'Loading User'}
+                        {error && 'Unknown User'}#0000
+                    </span>
+                </div>
+            </div>
+        );
     }
 
     if (data) {
         return (
             <div className="Avatar Utils__Flex--75">
                 <img className="Avatar__Image" src={getIcon(userId, data.tag, data.avatar)} />
-                <p className="Avatar__Text">
-                    <b>{data.nickname ? `${data.nickname} (${data.tag})` : data.tag}</b>
-                </p>
+                <div>
+                    {data.nickname ? (
+                        <p>
+                            <b>{data.nickname}</b> <span className="Utils__Grey">{data.tag}</span>
+                        </p>
+                    ) : (
+                        <p>
+                            <b>{data.tag}</b>
+                        </p>
+                    )}
+                </div>
             </div>
         );
     }
