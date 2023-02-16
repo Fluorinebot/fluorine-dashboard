@@ -8,11 +8,11 @@ const getIcon = (x: APIGuild & { fluorine: boolean }) =>
         ? `https://cdn.discordapp.com/icons/${x.id}/${x.icon}.${x.icon.endsWith('_a') ? 'gif' : 'webp'}?size=1024`
         : `https://cdn.discordapp.com/embed/avatars/${BigInt(x.id) % BigInt(5)}.png?size=48`;
 
-const GuildCard: React.FC<{ guild: APIGuild & { fluorine: boolean } }> = ({ guild }) => {
+const GuildCard: React.FC<{ guild: APIGuild & { fluorine: boolean }; link: string }> = ({ guild, link }) => {
     const jsx = (
-        <Card gap={2} rounded={'md'} p={2}>
+        <Card gap={2} rounded={'md'} p={2} width="100%">
             <Center>
-                <Image objectFit="cover" w={'36'} h={'36'} src={getIcon(guild)} alt="" rounded={'full'} />
+                <Image objectFit="cover" w={'24'} h={'24'} src={getIcon(guild)} alt="" rounded={'full'} />
             </Center>
             <Heading as="h5" size="md" marginBlock={'auto'} textAlign="center">
                 {guild.name}
@@ -23,7 +23,7 @@ const GuildCard: React.FC<{ guild: APIGuild & { fluorine: boolean } }> = ({ guil
     return (
         <>
             {guild.fluorine ? (
-                <Link to={`/guilds/${guild.id}/cases`}>{jsx}</Link>
+                <Link to={`/${link}/${guild.id}/cases`}>{jsx}</Link>
             ) : (
                 <a
                     href={`https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&scope=bot+applications.commands&permissions=1374389881878&guild_id=${guild.id}`}

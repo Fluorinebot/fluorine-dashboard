@@ -7,21 +7,35 @@ import { Outlet } from 'react-router-dom';
 const MainLayout: React.FC<{ disclosureProps: UseDisclosureReturn }> = ({ disclosureProps }) => {
     const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
-    // const renderContent = (isMobile && renderContext && renderContext[0] === 'content') || !isMobile;
-
     return (
-        <Flex overflowY="hidden">
-            <Sidebar disclosureProps={disclosureProps}>
-                <HomeMenu />
-            </Sidebar>
-            <Box as="main" flex="80%" padding={4}>
-                <Center flexDirection={'column'}>
-                    <Box width={['full', 'full', `${50 + 25 / 2}%`]}>
+        <Box overflowY="hidden">
+            {isMobile ? (
+                <Box>
+                    <Sidebar disclosureProps={disclosureProps}>
+                        <HomeMenu />
+                    </Sidebar>
+
+                    <Box as="main" padding={4}>
                         <Outlet />
                     </Box>
-                </Center>
-            </Box>
-        </Flex>
+                </Box>
+            ) : (
+                <Flex overflowY="hidden" height="100vh">
+                    <Box flex="20%" height="100vh">
+                        <Sidebar disclosureProps={disclosureProps}>
+                            <HomeMenu />
+                        </Sidebar>
+                    </Box>
+                    <Box as="main" flex="80%" padding={4} maxHeight="100vh" overflowY="scroll">
+                        <Center flexDirection={'column'}>
+                            <Box width={['full', 'full', `${50 + 25 / 2}%`]}>
+                                <Outlet />
+                            </Box>
+                        </Center>
+                    </Box>
+                </Flex>
+            )}
+        </Box>
     );
 };
 

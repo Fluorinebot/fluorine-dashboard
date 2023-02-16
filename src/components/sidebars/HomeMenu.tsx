@@ -1,6 +1,6 @@
 import { BASE_URI } from '#/lib/constants';
 import useAPI from '#/lib/useAPI';
-import { ListItem, Flex, Heading, List, Button } from '@chakra-ui/react';
+import { ListItem, Flex, Heading, List, Button, Box } from '@chakra-ui/react';
 import classNames from 'classnames';
 import { APIUser } from 'discord-api-types/v10';
 import { IconType } from 'react-icons';
@@ -81,15 +81,15 @@ export default function HomeMenu() {
             tabIcon: MdLeaderboard,
             tabURI: '/leaderboards',
             selected: location.pathname === '/leaderboards'
-        },
-        { tabName: 'Log out', tabIcon: MdLogout, tabURI: '/log-out', selected: location.pathname === '/log-out' }
+        }
     ];
+
     return (
         <>
             {code === 401 ? (
                 <p>You must authorize to continue.</p>
             ) : (
-                <div>
+                <Box>
                     {/* {profileJSX} */}
                     <nav>
                         <List spacing={2}>
@@ -98,7 +98,7 @@ export default function HomeMenu() {
                             ))}
                         </List>
                     </nav>
-                </div>
+                </Box>
             )}
         </>
     );

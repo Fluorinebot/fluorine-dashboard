@@ -1,5 +1,5 @@
 import AvatarWithName from '#/components/AvatarWithName';
-import { Authorize } from '#/components/ErrorBoundary';
+import { AuthorizeError } from '#/components/ErrorBoundary';
 import { Spinner } from '@chakra-ui/react';
 import { BASE_URI } from '#/lib/constants';
 import type { Case } from '#/lib/types';
@@ -31,7 +31,7 @@ export default function Case() {
         if (code === 401) {
             return (
                 <div className="container">
-                    <Authorize />
+                    <AuthorizeError />
                 </div>
             );
         } else if (code === 404) {

@@ -1,4 +1,4 @@
-import { Authorize } from '#/components/ErrorBoundary';
+import { AuthorizeError } from '#/components/ErrorBoundary';
 import GuildCard from '#/components/GuildCard';
 import { Box, Divider, Flex, Grid, GridItem, Spinner, Text } from '@chakra-ui/react';
 import { BASE_URI } from '#/lib/constants';
@@ -17,7 +17,7 @@ const Leaderboard: React.FC<{}> = ({}) => {
 
     if (error) {
         if (code === 401) {
-            return <Authorize />;
+            return <AuthorizeError />;
         }
 
         return <p className="Utils__NoticeBox">There was an error loading your servers, try again.</p>;
@@ -53,7 +53,7 @@ const Leaderboard: React.FC<{}> = ({}) => {
                         })
                         .map(guild => (
                             <GridItem key={guild.id}>
-                                <GuildCard guild={guild} />
+                                <GuildCard guild={guild} link="leaderboards" />
                             </GridItem>
                         ))}
                 </Grid>

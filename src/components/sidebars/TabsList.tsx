@@ -36,7 +36,7 @@ function Tab({ tabName, tabURI, selected, ...props }: TabProps & { selected: boo
             <Link to={tabURI}>
                 <Button
                     gap={2}
-                    color={selected ? 'FixedBlue.100' : ''}
+                    color={selected ? 'fixedBlue.100' : ''}
                     iconSpacing={2}
                     leftIcon={<props.tabIcon size="36" />}
                     variant="ghost"
@@ -87,10 +87,6 @@ export default function TabsList({
             <Center height={'100%'} width={'100%'}>
                 <Flex gap={2}>
                     <Icon as={MdError} h={10} w={10}></Icon>
-                    <Box>
-                        <Heading size="md">Something went wrong.</Heading>
-                        <Text size="md">Please try again.</Text>
-                    </Box>
                 </Flex>
             </Center>
         );
@@ -98,15 +94,15 @@ export default function TabsList({
 
     if (data) {
         return (
-            <Box gap="2">
+            <Flex gap={4} direction="column">
                 <Flex gap="2">
                     <Image
                         objectFit="cover"
-                        w={'48'}
-                        h={'48'}
+                        w={'14'}
+                        h={'14'}
                         src={getIcon(id ?? '', data.icon)}
                         alt=""
-                        rounded={'md'}
+                        rounded={'full'}
                     />
                     <Heading as="h5" size="md" marginBlock={'auto'}>
                         {data.name}
@@ -124,7 +120,9 @@ export default function TabsList({
                         ))}
                     </List>
                 </Box>
-            </Box>
+            </Flex>
         );
     }
+
+    return <></>;
 }

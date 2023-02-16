@@ -1,7 +1,20 @@
-import { Authorize } from '#/components/ErrorBoundary';
-import { Spinner } from '@chakra-ui/react';
+import { AuthorizeError } from '#/components/ErrorBoundary';
 import { BASE_URI } from '#/lib/constants';
 import useAPI from '#/lib/useAPI';
+import {
+    Box,
+    Button,
+    Checkbox,
+    Divider,
+    Flex,
+    FormControl, FormLabel,
+    Heading,
+    Input,
+    Spinner,
+    Stack,
+    Text,
+    useToast
+} from '@chakra-ui/react';
 import { Formik } from 'formik';
 import { useParams } from 'react-router-dom';
 
@@ -14,6 +27,7 @@ interface Config {
 const Logging: React.FC<{}> = ({}) => {
     const params = useParams();
     const { data, loading, error, code } = useAPI<Config>(`${BASE_URI}/guilds/${params.id}`);
+    const toast = useToast();
 
     if (loading) {
         return <Spinner />;
@@ -21,7 +35,7 @@ const Logging: React.FC<{}> = ({}) => {
 
     if (error) {
         if (code === 401) {
-            return <Authorize />;
+            return <AuthorizeError />;
         }
 
         return <p>An error has occured.</p>;
@@ -29,11 +43,18 @@ const Logging: React.FC<{}> = ({}) => {
 
     if (data) {
         return (
-            <>
-                <div className="Utils__Leading">
-                    <h2 className="Utils__Leading">Logging</h2>
-                    <p>Customize Fluorine's logging system for this server.</p>
-                </div>
+            <Box width={['full', 'full', `${50 + 25 / 2}%`]}>
+                <Flex direction={'column'} gap={2}>
+                    <Heading as="h2" size="xl" fontWeight={800}>
+                        Logging
+                    </Heading>
+                    <Text size="md" fontWeight={400}>
+                        Change the behavior of Fluorine's logging system in this server.
+                    </Text>
+                </Flex>
+
+                <Divider marginY={4} />
+
                 <Formik
                     initialValues={{
                         logsEnabled: data.logsEnabled,
@@ -50,8 +71,20 @@ const Logging: React.FC<{}> = ({}) => {
                                 throw new Error(err.message);
                             });
 
-                            if (patch.status >= 500) {
-                                throw new Error('Patch fail');
+                            if (patch.ok) {
+                                toast({
+                                    title: 'Saved changes.',
+                                    status: 'success',
+                                    duration: 9000,
+                                    isClosable: true
+                                });
+                            } else {
+                                toast({
+                                    title: 'Something went wrong!',
+                                    status: 'error',
+                                    duration: 9000,
+                                    isClosable: true
+                                });
                             }
 
                             actions.setValues(values);
@@ -62,54 +95,55 @@ const Logging: React.FC<{}> = ({}) => {
                 >
                     {props => {
                         return (
-                            <form className="Form" onSubmit={props.handleSubmit}>
-                                <div className="Form__CheckboxField">
-                                    <input
-                                        type="checkbox"
+                            <form onSubmit={props.handleSubmit}>
+                                <Stack spacing={4} direction="column">
+                                    <Checkbox
+                                        id="logsEnabled"
                                         name="logsEnabled"
+                                        onChange={props.handleChange}
                                         checked={props.values.logsEnabled}
-                                        onChange={props.handleChange}
-                                        className="Form__Checkbox"
-                                    />
-                                    <label className="Form__Label Utils__TextAlign">Enable Logs</label>
-                                </div>
+                                        colorScheme="brand"
+                                    >
+                                        Enable logs?
+                                    </Checkbox>
 
-                                <div className="Form__CheckboxField">
-                                    <input
-                                        type="checkbox"
+                                    <Checkbox
+                                        id="logModerationActions"
                                         name="logModerationActions"
+                                        onChange={props.handleChange}
                                         checked={props.values.logModerationActions}
-                                        onChange={props.handleChange}
-                                        className="Form__Checkbox"
                                         disabled={!props.values.logsEnabled}
-                                    />
-                                    <label className="Form__Label Utils__TextAlign">Log Moderation Actions</label>
-                                </div>
+                                        colorScheme="brand"
+                                    >
+                                        Log moderation actions
+                                    </Checkbox>
+                                    <FormControl>
+                                        <FormLabel>Logs Channel</FormLabel>
+                                        <Input
+                                            type="text"
+                                            id="logsChannel"
+                                            name="logsChannel"
+                                            onChange={props.handleChange}
+                                            value={props.values.logsChannel}
+                                        />
+                                    </FormControl>
 
-                                <div className="Form__Field">
-                                    <label className="Form__Label">Logs Channel</label>
-                                    <input
-                                        type="text"
-                                        name="logsChannel"
-                                        value={props.values.logsChannel}
-                                        onChange={props.handleChange}
-                                        className="Form__TextInput"
-                                        disabled={!props.values.logsEnabled}
-                                    />
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    className="Button Button--Primary"
-                                    disabled={props.isSubmitting ? props.isSubmitting : !props.dirty}
-                                >
-                                    {props.isSubmitting ? 'hi' : 'Save changes'}
-                                </button>
+                                    <Button
+                                        type="submit"
+                                        isLoading={props.isSubmitting}
+                                        loadingText="Saving changes"
+                                        disabled={props.isSubmitting ? props.isSubmitting : props.dirty}
+                                        colorScheme={'brand'}
+                                        width={'fit-content'}
+                                    >
+                                        Save changes
+                                    </Button>
+                                </Stack>
                             </form>
                         );
                     }}
                 </Formik>
-            </>
+            </Box>
         );
     }
 

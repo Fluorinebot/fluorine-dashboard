@@ -1,4 +1,3 @@
-// import '#/assets/components/Sidebar.css';
 import {
     Box,
     Drawer,
@@ -8,7 +7,9 @@ import {
     DrawerFooter,
     DrawerHeader,
     DrawerOverlay,
+    Flex,
     IconButton,
+    Text,
     useColorMode,
     useColorModeValue,
     UseDisclosureReturn,
@@ -16,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { MdDarkMode, MdLightMode, MdLogout } from 'react-icons/md';
 import { useMediaQuery } from 'react-responsive';
+import { Link } from 'react-router-dom';
 
 const Sidebar: React.FC<{
     children: React.ReactNode;
@@ -24,6 +26,31 @@ const Sidebar: React.FC<{
     const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
     const { colorMode, toggleColorMode } = useColorMode();
     const toast = useToast();
+
+    const buttons = (
+        <>
+            <IconButton
+                onClick={() =>
+                    toast({
+                        title: 'You may not log out at this time.',
+                        status: 'error',
+                        duration: 9000,
+                        position: 'top',
+                        isClosable: true
+                    })
+                }
+                aria-label={'Log out'}
+                icon={<MdLogout size={'24'} />}
+                variant="ghost"
+            />
+            <IconButton
+                onClick={toggleColorMode}
+                aria-label={colorMode === 'dark' ? 'Enable light mode' : 'Enable dark mode'}
+                icon={colorMode === 'dark' ? <MdDarkMode size={'24'} /> : <MdLightMode size={'24'} />}
+                variant="ghost"
+            />
+        </>
+    );
 
     return (
         <>
@@ -36,41 +63,30 @@ const Sidebar: React.FC<{
 
                         <DrawerBody onClickCapture={disclosureProps.onClose}>{children}</DrawerBody>
 
-                        <DrawerFooter gap={2}>
-                            <IconButton
-                                onClick={() =>
-                                    toast({
-                                        title: 'You may not log out at this time.',
-                                        status: 'error',
-                                        duration: 9000,
-                                        position: 'top',
-                                        isClosable: true
-                                    })
-                                }
-                                aria-label={'Log out'}
-                                icon={<MdLogout size={'24'} />}
-                                variant="ghost"
-                            />
-                            <IconButton
-                                onClick={toggleColorMode}
-                                aria-label={colorMode === 'dark' ? 'Enable light mode' : 'Enable dark mode'}
-                                icon={colorMode === 'dark' ? <MdDarkMode size={'24'} /> : <MdLightMode size={'24'} />}
-                                variant="ghost"
-                            />
-                        </DrawerFooter>
+                        <DrawerFooter gap={2}>{buttons}</DrawerFooter>
                     </DrawerContent>
                 </Drawer>
             ) : (
-                <Box
-                    className="Sidebar"
-                    flex={'20%'}
-                    background={useColorModeValue('gray.200', 'gray.900')}
+                <Flex
+                    direction="column"
+                    background={useColorModeValue('gray.50', 'gray.900')}
                     padding={4}
                     as={'aside'}
-                    height={'100vh'}
+                    height={'100%'}
+                    gap={3}
                 >
-                    <nav className="DisplayedContent">{children}</nav>
-                </Box>
+                    <Link to="/">
+                        <Text fontSize={'2xl'} as="h1" fontWeight={900}>
+                            Fluorine
+                        </Text>
+                    </Link>
+
+                    <Box flex={1} overflowY={'scroll'} maxHeight="100vh">
+                        {children}
+                    </Box>
+
+                    <Flex gap={2}>{buttons}</Flex>
+                </Flex>
             )}
         </>
     );

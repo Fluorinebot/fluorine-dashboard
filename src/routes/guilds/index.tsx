@@ -1,4 +1,4 @@
-import { Authorize } from '#/components/ErrorBoundary';
+import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import GuildCard from '#/components/GuildCard';
 import { BASE_URI } from '#/lib/constants';
 import useAPI from '#/lib/useAPI';
@@ -30,7 +30,7 @@ function GuildSection({ header, data }: { header: string; data: (APIGuild & { fl
                     })
                     .map(guild => (
                         <GridItem key={guild.id}>
-                            <GuildCard guild={guild} />
+                            <GuildCard guild={guild} link="guilds" />
                         </GridItem>
                     ))}
             </Grid>
@@ -38,7 +38,7 @@ function GuildSection({ header, data }: { header: string; data: (APIGuild & { fl
     );
 }
 
-const Guilds: React.FC<{}> = ({}) => {
+const GuildSelection: React.FC<{}> = ({}) => {
     const { loading, data, error, code } = useAPI<{ guilds: (APIGuild & { fluorine: boolean })[] }>(
         `${BASE_URI}/guilds`,
         { method: 'GET' }
@@ -50,10 +50,10 @@ const Guilds: React.FC<{}> = ({}) => {
 
     if (error) {
         if (code === 401) {
-            return <Authorize />;
+            return <AuthorizeError />;
         }
 
-        return <p className="Utils__NoticeBox">There was an error loading your servers, try again.</p>;
+        return <ErrorMessage heading="Something went wrong!" message="Please try again." isInternal />;
     }
 
     if (data) {
@@ -84,4 +84,4 @@ const Guilds: React.FC<{}> = ({}) => {
     return <></>;
 };
 
-export default Guilds;
+export default GuildSelection;
