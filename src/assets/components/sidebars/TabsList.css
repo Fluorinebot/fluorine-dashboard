@@ -1,6 +1,11 @@
 .TabsList__Flex {
     display: flex;
     flex-direction: column;
+    width: 100%;
+}
+
+.TabsList__FullFlex {
+    flex: 1;
 }
 
 .TabsList__Header {
@@ -18,17 +23,22 @@
     width: 48px;
 }
 
-.TabCard {
+.TabCard,
+.TabLike {
     display: flex;
     padding: calc(var(--increment) * 1.5);
     align-content: center;
     background: var(--bg-teritary);
     border-radius: calc(var(--increment) * 2);
     margin-top: var(--increment);
-    margin-bottom: var(-increment);
+    margin-bottom: var(--increment);
     transition-property: all;
     transition-timing-function: linear;
     transition-duration: 150ms;
+
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    color: var(--text-primary);
 }
 
 .TabCard__Icon {
@@ -37,21 +47,33 @@
     width: 32px;
 }
 
+.TabCard__Avatar {
+    border-radius: 50%;
+    margin-right: calc(var(--increment) * 2);
+    height: 48px;
+    width: 48px;
+}
+
 .TabCard:hover {
     color: var(--brand-blue);
 }
 
 .TabCard--Selected {
-    background: var(--brand-blue);
-    color: var(--tex-color);
+    border-left: 4px solid var(--brand-blue);
+    color: var(--brand-blue);
+    background: var(--bg-primary);
 }
 
 .TabCard--Selected:hover {
     box-shadow: var(--drop-shadow);
-    color: var(--text-color);
 }
 
 .TabCard__Text,
-.Header__Text {
+.Header__Text,
+.TabsList__Text {
     margin: auto 0;
+}
+
+.TabsList__Text {
+    color: var(--text-primary);
 }

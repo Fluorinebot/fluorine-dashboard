@@ -7,7 +7,7 @@ export interface Profile {
     birthday?: string;
 }
 
-export type ErrorType<T> = ({ error?: string } & Record<string, any>) | T | undefined;
+export type ErrorType<T> = { error: string } | T | undefined;
 
 export interface Case {
     caseId: number;

@@ -1,14 +1,8 @@
+import { Box, Button, Center, Flex, Heading, Icon, Text } from '@chakra-ui/react';
 import { Component, PropsWithChildren, ErrorInfo } from 'react';
+import { MdError } from 'react-icons/md';
 import { CLIENT_ID, REDIRECT_URI } from '../lib/constants';
 
-export const ErrorMessage: React.FC<{}> = () => (
-    <div className="noticeBox">
-        <div>
-            <h1 className="headingTwo textHeading">Something went wrong.</h1>
-            <p className="grey">Please try again. If this problem persits, inform the developers.</p>
-        </div>
-    </div>
-);
 export class ContentBoundary extends Component<PropsWithChildren, { hasError: boolean }> {
     constructor(props: PropsWithChildren) {
         super(props);
@@ -25,14 +19,24 @@ export class ContentBoundary extends Component<PropsWithChildren, { hasError: bo
 
     render() {
         if (this.state.hasError) {
-            return <ErrorMessage />;
+            return (
+                <Center height={'100%'} width={'100%'}>
+                    <Flex gap={2}>
+                        <Icon as={MdError} h={10} w={10}></Icon>
+                        <Box>
+                            <Heading size="md">Something went wrong.</Heading>
+                            <Text size="md">Please try again.</Text>
+                        </Box>
+                    </Flex>
+                </Center>
+            );
         }
 
         return this.props.children;
     }
 }
 
-export class AsideBoundary extends Component<PropsWithChildren, { hasError: boolean }> {
+export class ErrorBoundary extends Component<PropsWithChildren, { hasError: boolean }> {
     constructor(props: PropsWithChildren) {
         super(props);
         this.state = { hasError: false };
@@ -49,12 +53,15 @@ export class AsideBoundary extends Component<PropsWithChildren, { hasError: bool
     render() {
         if (this.state.hasError) {
             return (
-                <div className="noticeBox">
-                    <div>
-                        <h1 className="headingTwo textHeading">Something went wrong.</h1>
-                        <p className="grey">Please try again. If this problem persits, inform the developers.</p>
-                    </div>
-                </div>
+                <Center height={'100%'} width={'100%'}>
+                    <Flex gap={2}>
+                        <Icon as={MdError} h={10} w={10}></Icon>
+                        <Box>
+                            <Heading size="md">Something went wrong.</Heading>
+                            <Text size="md">Please try again.</Text>
+                        </Box>
+                    </Flex>
+                </Center>
             );
         }
 
@@ -64,17 +71,34 @@ export class AsideBoundary extends Component<PropsWithChildren, { hasError: bool
 
 export function Authorize() {
     return (
-        <div className="noticeBox">
-            <div>
-                <h2 className="headingTwo leading">You need to login.</h2>
-                <p className="leading">To continue, you must authorize with Discord.</p>
-                <a
-                    href={`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify%20guilds`}
-                    className="Button Button--Primary"
-                >
-                    Continue with Discord
-                </a>
-            </div>
-        </div>
+        <Center height={'100%'} width={'100%'}>
+            <Flex gap={2}>
+                <Icon as={MdError} h={10} w={10}></Icon>
+                <Box>
+                    <Heading size="md">You need to login!</Heading>
+                    <Text size="md">To continue, you must authorize with Discord.</Text>
+                    <Button
+                        as="a"
+                        marginTop={2}
+                        href={`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify%20guilds`}
+                        colorScheme="brand"
+                    >
+                        Continue with Discord.
+                    </Button>
+                </Box>
+            </Flex>
+        </Center>
+        // <div className="Utils__NoticeBox">
+        //     <div>
+        //         <h2 className="headingTwo leading">You need to login.</h2>
+        //         <p className="leading">To continue, you must authorize with Discord.</p>
+        //         <a
+        //             href={`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify%20guilds`}
+        //             className="Button Button--Primary"
+        //         >
+        //             Continue with Discord
+        //         </a>
+        //     </div>
+        // </div>
     );
 }

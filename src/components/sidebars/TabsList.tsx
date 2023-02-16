@@ -1,8 +1,22 @@
-import '#/assets/components/sidebars/TabsList.css';
+// import '#/assets/components/sidebars/TabsList.css';
 import { ErrorType } from '#/lib/types';
-import classNames from 'classnames';
+import {
+    Box,
+    Button,
+    Center,
+    Flex,
+    Heading,
+    Icon,
+    Image,
+    List,
+    ListItem,
+    Spinner,
+    Text,
+    useTab,
+    useToast
+} from '@chakra-ui/react';
 import { IconType } from 'react-icons';
-import { FaArrowLeft, FaCog, FaFile } from 'react-icons/fa';
+import { MdArrowBack, MdError, MdInsertDriveFile, MdSettings } from 'react-icons/md';
 import { Link, useLocation } from 'react-router-dom';
 
 interface TabProps {
@@ -13,15 +27,26 @@ interface TabProps {
 
 const getIcon = (id: string, icon?: string) =>
     icon
-        ? `https://cdn.discordapp.com/icons/${id}/${icon}.${icon.endsWith('_a') ? 'gif' : 'webp'}?size=48`
+        ? `https://cdn.discordapp.com/icons/${id}/${icon}.${icon.endsWith('_a') ? 'gif' : 'webp'}?size=1024`
         : `https://cdn.discordapp.com/embed/avatars/${BigInt(id) % BigInt(5)}.png?size=48`;
 
 function Tab({ tabName, tabURI, selected, ...props }: TabProps & { selected: boolean }) {
     return (
-        <Link to={tabURI} className={classNames('TabCard', { 'TabCard--Selected': selected })}>
-            <props.tabIcon className="TabCard__Icon" />
-            <h5 className="TabCard__Text">{tabName}</h5>
-        </Link>
+        <ListItem>
+            <Link to={tabURI}>
+                <Button
+                    gap={2}
+                    color={selected ? 'FixedBlue.100' : ''}
+                    iconSpacing={2}
+                    leftIcon={<props.tabIcon size="36" />}
+                    variant="ghost"
+                >
+                    <Heading as="h5" size="md" fontWeight={600} marginBlock={'auto'}>
+                        {tabName}
+                    </Heading>
+                </Button>
+            </Link>
+        </ListItem>
     );
 }
 
@@ -44,51 +69,62 @@ export default function TabsList({
     const currLocation = location.pathname.split('/')[3];
 
     const tabs: TabProps[] = [
-        { tabName: 'Back', tabURI: isGuildBackURI ? `/guilds/${id}` : `/`, tabIcon: FaArrowLeft },
+        { tabName: 'Back', tabURI: isGuildBackURI ? `/guilds/${id}/${currLocation}` : `/guilds`, tabIcon: MdArrowBack },
         {
             tabName: 'Cases',
             tabURI: `/guilds/${id}/cases`,
-            tabIcon: FaFile
+            tabIcon: MdInsertDriveFile
         },
-        { tabName: 'Logging Options', tabURI: `/guilds/${id}/logging`, tabIcon: FaCog }
+        { tabName: 'Logging Options', tabURI: `/guilds/${id}/logging`, tabIcon: MdSettings }
     ];
 
     if (loading) {
-        return <p className="noticeBox">Just a sec</p>;
+        return <Spinner />;
     }
 
     if (error) {
-        if (code === 401) {
-            return <p className="noticeBox">You must authorize to continue</p>;
-        } else if (code === 404) {
-            return <p className="noticeBox">That server does not exist</p>;
-        }
+        return (
+            <Center height={'100%'} width={'100%'}>
+                <Flex gap={2}>
+                    <Icon as={MdError} h={10} w={10}></Icon>
+                    <Box>
+                        <Heading size="md">Something went wrong.</Heading>
+                        <Text size="md">Please try again.</Text>
+                    </Box>
+                </Flex>
+            </Center>
+        );
     }
 
-    return (
-        <>
-            {loading && <p>Just a sec</p>}
-            {error && <p>You must authorize to continue.</p>}
-            {data && (
-                <div className="TabsList__Flex">
-                    <div className="TabsList__Header">
-                        <img className="Header__Image" src={getIcon(id ?? '', data.icon)} alt="" />
-                        <h2 className="Header__Text">{data.name}</h2>
-                    </div>
-                    <nav>
-                        <ul>
-                            {tabs.map(item => (
-                                <li key={item.tabName}>
-                                    <Tab
-                                        {...item}
-                                        selected={currLocation === item.tabName.split(' ')[0].toLowerCase()}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
-                    </nav>
-                </div>
-            )}
-        </>
-    );
+    if (data) {
+        return (
+            <Box gap="2">
+                <Flex gap="2">
+                    <Image
+                        objectFit="cover"
+                        w={'48'}
+                        h={'48'}
+                        src={getIcon(id ?? '', data.icon)}
+                        alt=""
+                        rounded={'md'}
+                    />
+                    <Heading as="h5" size="md" marginBlock={'auto'}>
+                        {data.name}
+                    </Heading>
+                </Flex>
+
+                <Box as="nav">
+                    <List spacing={2}>
+                        {tabs.map(item => (
+                            <Tab
+                                key={item.tabName}
+                                {...item}
+                                selected={currLocation === item.tabName.split(' ')[0].toLowerCase()}
+                            />
+                        ))}
+                    </List>
+                </Box>
+            </Box>
+        );
+    }
 }

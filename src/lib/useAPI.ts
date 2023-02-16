@@ -10,21 +10,28 @@ const useAPI = <SuccessType, K = {}>(url: string, options: RequestInit = {}) => 
     useEffect(() => {
         let ignore = false;
 
-        fetch(url, { credentials: 'include', ...options })
-            .then(res => {
+        const func = async () => {
+            try {
+                const res = await fetch(url, { credentials: 'include', ...options });
                 setCode(res.status);
-                if (res.ok) {
-                    return res.json();
-                }
 
-                throw res;
-            })
-            .then(resData => setData(resData))
-            .catch(err => {
-                console.error(error);
-                setError(err?.message ? { error: err.message } : err);
-            })
-            .finally(() => setLoading(false));
+                const body = await res.json();
+                if (res.ok) {
+                    setData(body);
+                } else {
+                    setError(body);
+                }
+            } catch (err) {
+                if (err instanceof Error) {
+                    setError({ error: err.message });
+                    setCode(1000);
+                }
+            }
+
+            setLoading(false);
+        };
+
+        func();
 
         return () => {
             ignore = true;

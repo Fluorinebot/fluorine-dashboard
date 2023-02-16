@@ -1,4 +1,6 @@
+import '#/assets/routes/guilds/[id]/cases/index.css';
 import { Authorize } from '#/components/ErrorBoundary';
+import { Spinner } from '@chakra-ui/react';
 import CasesTable from '#/components/views/CasesTable';
 import { BASE_URI } from '#/lib/constants';
 import type { Case } from '#/lib/types';
@@ -10,7 +12,7 @@ export default function Cases() {
     const { loading, data: caseData, code, error } = useAPI<Case[]>(`${BASE_URI}/guilds/${params.id}/cases`);
 
     if (loading) {
-        return <p className="noticeBox container">Loading all cases</p>;
+        return <Spinner />;
     }
 
     if (error) {
@@ -22,19 +24,22 @@ export default function Cases() {
             );
         }
 
-        return <p className="noticeBox container">There was an error loading the cases, try again.</p>;
+        return <p className="Utils__NoticeBox container">There was an error loading the cases, try again.</p>;
     }
 
     if (caseData) {
         return (
             <>
-                <div>
-                    <h2 className="Utils__Leading">Cases</h2>
-                    <p>The log of all moderation cases in this server.</p>
-                </div>
-
                 {params.item && <Outlet />}
-                {!params.item && <CasesTable caseData={caseData} />}
+                {!params.item && (
+                    <>
+                        <div>
+                            <h2 className="Utils__Leading">Cases</h2>
+                            <p>The log of all moderation cases in this server.</p>
+                        </div>
+                        <CasesTable caseData={caseData} />
+                    </>
+                )}
             </>
         );
     }

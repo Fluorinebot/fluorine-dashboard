@@ -1,6 +1,6 @@
-import styles from '#/assets/routes/guild/Cases.css';
 import AvatarWithName from '#/components/AvatarWithName';
 import { Authorize } from '#/components/ErrorBoundary';
+import { Spinner } from '@chakra-ui/react';
 import { BASE_URI } from '#/lib/constants';
 import type { Case } from '#/lib/types';
 import useAPI from '#/lib/useAPI';
@@ -24,7 +24,7 @@ export default function Case() {
     const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
     if (loading) {
-        return <p className="noticeBox container">Loading all cases</p>;
+        return <Spinner />;
     }
 
     if (error) {
@@ -42,7 +42,7 @@ export default function Case() {
             );
         }
 
-        return <p className="noticeBox container">There was an error loading the cases, try again.</p>;
+        return <p className="Utils__NoticeBox container">There was an error loading the cases, try again.</p>;
     }
 
     if (data) {
@@ -51,24 +51,24 @@ export default function Case() {
         }
 
         return (
-            <div className="container">
+            <div>
                 <div>
-                    <h2 className="leading">Case #{data.caseId}</h2>
-                    <p className="leading">A {data.type}</p>
+                    <h2 className="Utils__Leading">Case #{data.caseId}</h2>
+                    <p className="Utils__Leading">A {data.type}</p>
                 </div>
 
                 <div>
-                    <p className={`${styles.nameFlex} leading`}>
-                        <p className={`${styles.sideName} grey`}>Moderator </p>
+                    <p className="Utils__Leading">
+                        <p className="Utils__Grey">Moderator</p>
                         <AvatarWithName guildId={data.guildId} userId={data.caseCreator} />
                     </p>
-                    <div className={`${styles.nameFlex} leading`}>
-                        <p className={`${styles.sideName} grey`}>Moderated User </p>
+                    <div className="Utils__Leading">
+                        <p className="Utils__Grey">Moderated User</p>
                         <AvatarWithName guildId={data.guildId} userId={data.moderatedUser} />
                     </div>
-                    <div className={styles.nameFlex}>
-                        <p className={`${styles.sideName} grey`}>Reason </p>
-                        <b className={styles.name}>{data.reason ?? 'None'}</b>
+                    <div className="Utils__Leading">
+                        <p className="Utils__Grey">Reason</p>
+                        <b>{data.reason ?? 'None'}</b>
                     </div>
                 </div>
             </div>

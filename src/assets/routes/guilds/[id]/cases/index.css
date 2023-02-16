@@ -52,3 +52,13 @@
     padding: var(--increment);
     background: var(--background-teritary);
 }
+
+.CasesFlex {
+    display: flex;
+    flex-direction: row;
+    gap: calc(var(--increment) * 2);
+}
+
+.HalfFlex {
+    flex: 50%;
+}
