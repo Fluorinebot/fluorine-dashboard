@@ -16,9 +16,11 @@ const useAPI = <SuccessType, K = {}>(url: string, options: RequestInit = {}) => 
                 setCode(res.status);
 
                 const body = await res.json();
+
                 if (res.ok) {
                     setData(body);
                 } else {
+                    console.log(body);
                     setError(body);
                 }
             } catch (err) {
