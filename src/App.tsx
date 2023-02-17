@@ -1,16 +1,26 @@
 import MainLayout from '#/components/layouts/Main';
 import Home from '#/routes';
 import GuildSelection from '#/routes/guilds';
-import GuildSection from '#/routes/guilds';
 import Guild from '#/routes/guilds/[id]';
 import Cases from '#/routes/guilds/[id]/cases';
 import Case from '#/routes/guilds/[id]/cases/[id]';
 import Logging from '#/routes/guilds/[id]/logging';
 import Leaderboard from '#/routes/leaderboard';
-import { Center, DarkMode, Flex, IconButton, Text, useColorMode, useDisclosure } from '@chakra-ui/react';
-import { MdArrowUpward, MdDarkMode, MdLightMode, MdMenu } from 'react-icons/md';
+import {
+    Box,
+    Center,
+    DarkMode,
+    Flex,
+    Heading,
+    Icon,
+    IconButton,
+    Text,
+    useColorMode,
+    useDisclosure
+} from '@chakra-ui/react';
+import { MdArrowUpward, MdDarkMode, MdError, MdLightMode, MdMenu } from 'react-icons/md';
 import { useMediaQuery } from 'react-responsive';
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ContentBoundary, ErrorMessage } from './components/ErrorBoundary';
 
 function App() {
@@ -55,7 +65,7 @@ function App() {
                 </Flex>
             )}
 
-            <ContentBoundary>   
+            <ContentBoundary>
                 <Routes>
                     <Route element={<MainLayout disclosureProps={disclosureProps} />}>
                         <Route element={<Home />} path="/" />
@@ -64,17 +74,23 @@ function App() {
                     </Route>
 
                     <Route element={<Guild disclosureProps={disclosureProps} />} path="/guilds/:id">
-                        <Route index element={<p>hi</p>} />
+                        <Route
+                            index
+                            element={
+                                <Center height={'100vh'} width={'100%'}>
+                                    <Flex gap={2}>
+                                        <Icon as={MdError} h={10} w={10} />
+                                        <Box>
+                                            <Heading size="md">No tab selected.</Heading>
+                                            <Text size="md">You need to select a tab from the menu.</Text>
+                                        </Box>
+                                    </Flex>
+                                </Center>
+                            }
+                        />
 
-                        <Route element={<Cases />} path="/guilds/:id/cases">
-                            <Route
-                                index
-                                element={<p className="Utils__NoticeBox">No item selected</p>}
-                                path="/guilds/:id/cases/"
-                            />
-
-                            <Route element={<Case />} path="/guilds/:id/cases/:item" />
-                        </Route>
+                        <Route element={<Cases />} path="/guilds/:id/cases" />
+                        <Route element={<Case />} path="/guilds/:id/cases/:item" />
 
                         <Route index element={<Logging />} path="/guilds/:id/logging/" />
                     </Route>

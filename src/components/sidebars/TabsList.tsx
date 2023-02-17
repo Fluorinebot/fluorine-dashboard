@@ -104,9 +104,14 @@ export default function TabsList({
                         alt=""
                         rounded={'full'}
                     />
-                    <Heading as="h5" size="md" marginBlock={'auto'}>
-                        {data.name}
-                    </Heading>
+                    <Box marginBlock={'auto'}>
+                        <Text size="sm" color="gray">
+                            Viewing
+                        </Text>
+                        <Heading as="h5" size="md">
+                            {data.name}
+                        </Heading>
+                    </Box>
                 </Flex>
 
                 <Box as="nav">

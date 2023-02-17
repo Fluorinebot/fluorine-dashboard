@@ -1,6 +1,6 @@
 import '#/assets/routes/guilds/[id]/cases/index.css';
 import AvatarWithName from '#/components/AvatarWithName';
-import { AuthorizeError } from '#/components/ErrorBoundary';
+import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import { BASE_URI } from '#/lib/constants';
 import type { Case } from '#/lib/types';
 import useAPI from '#/lib/useAPI';
@@ -157,14 +157,16 @@ export default function Cases() {
             return <AuthorizeError />;
         }
 
-        return <p className="Utils__NoticeBox container">There was an error loading the cases, try again.</p>;
+        return (
+            <ErrorMessage
+                heading="Something went wrong"
+                message="The cases for this server could not be loaded."
+                isInternal
+            />
+        );
     }
 
     if (caseData) {
-        if (params.item) {
-            return <Outlet />;
-        }
-
         if (isMobile) {
             return (
                 <>
@@ -192,7 +194,7 @@ export default function Cases() {
                 </Flex>
 
                 <TableContainer>
-                    <Table variant="simple" width={'100%'} overflowY="hidden">
+                    <Table variant="simple" maxWidth={'100%'}>
                         <Thead>
                             {table.getHeaderGroups().map(headerGroup => (
                                 <Tr key={headerGroup.id}>

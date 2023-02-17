@@ -1,20 +1,16 @@
 import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
-import { Box, Center, Flex, Heading, Icon, Spinner, Text, UseDisclosureReturn } from '@chakra-ui/react';
 import Sidebar from '#/components/Sidebar';
 import TabsList from '#/components/sidebars/TabsList';
 import { BASE_URI } from '#/lib/constants';
-import { RenderingContext } from '#/lib/RenderContext';
 import useAPI from '#/lib/useAPI';
-import { useContext } from 'react';
+import { Box, Flex, Spinner, UseDisclosureReturn } from '@chakra-ui/react';
 import { useMediaQuery } from 'react-responsive';
-import { Outlet, useLocation, useParams } from 'react-router-dom';
-import { MdError } from 'react-icons/md';
+import { Outlet, useParams } from 'react-router-dom';
 
 const getIcon = (id: string, icon?: string) =>
     icon
         ? `https://cdn.discordapp.com/icons/${id}/${icon}.${icon.endsWith('_a') ? 'gif' : 'webp'}?size=48`
         : `https://cdn.discordapp.com/embed/avatars/${BigInt(id) % BigInt(5)}.png?size=48`;
-
 const Guild: React.FC<{ disclosureProps: UseDisclosureReturn }> = ({ disclosureProps }) => {
     const params = useParams();
     const { data, error, loading, code } = useAPI<any>(`${BASE_URI}/guilds/${params.id}`);
