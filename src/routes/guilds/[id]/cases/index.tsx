@@ -1,4 +1,3 @@
-import '#/assets/routes/guilds/[id]/cases/index.css';
 import AvatarWithName from '#/components/AvatarWithName';
 import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import { BASE_URI } from '#/lib/constants';
@@ -36,7 +35,8 @@ import {
 } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 import {
-    MdArrowDownward, MdArrowUpward,
+    MdArrowDownward,
+    MdArrowUpward,
     MdChevronLeft,
     MdChevronRight,
     MdFirstPage,

@@ -2,7 +2,7 @@ import { Box, Button, Center, Flex, Heading, Icon, Text } from '@chakra-ui/react
 import { Component, PropsWithChildren, ErrorInfo } from 'react';
 import { MdError } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { CLIENT_ID, REDIRECT_URI } from '../lib/constants';
+import { CLIENT_ID, REDIRECT_URI } from '#/lib/constants';
 
 export const ErrorMessage: React.FC<{
     heading: string;

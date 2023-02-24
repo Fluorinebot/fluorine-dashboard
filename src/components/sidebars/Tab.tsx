@@ -5,24 +5,24 @@ import { NavLink } from 'react-router-dom';
 export interface TabObject {
     tabName: string;
     tabURI: string;
-    tabIcon: IconType;
+    TabIcon: IconType;
     end?: boolean;
 }
 
-const Tab: React.FC<TabObject> = props => {
+const Tab: React.FC<TabObject> = ({ TabIcon, tabURI, tabName, end }) => {
     return (
         <ListItem>
-            <NavLink to={props.tabURI} end={props.end}>
+            <NavLink to={tabURI} end={end}>
                 {({ isActive }) => (
                     <Button
                         gap={2}
-                        colorScheme={isActive ? 'brand' : useColorModeValue('black', 'white')}
+                        colorScheme={isActive ? 'brand' : useColorModeValue('gray', 'white')}
                         iconSpacing={2}
-                        leftIcon={<props.tabIcon size="36" />}
+                        leftIcon={<TabIcon size="36" />}
                         variant={isActive ? 'solid' : 'ghost'}
                     >
                         <Heading as="h5" size="md" fontWeight={600} marginBlock={'auto'}>
-                            {props.tabName}
+                            {tabName}
                         </Heading>
                     </Button>
                 )}

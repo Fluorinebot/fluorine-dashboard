@@ -39,7 +39,7 @@ const Sidebar: React.FC<{
     const toast = useToast();
     const navigate = useNavigate();
 
-    const { loading, data, error, code } = useAPI<APIUser>(`${BASE_URI}/user`, { method: 'GET' });
+    const { loading, data, error } = useAPI<APIUser>(`${BASE_URI}/user`, { method: 'GET' });
 
     if (error || loading || !data) {
     }

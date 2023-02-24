@@ -1,4 +1,3 @@
-// import '#/assets/components/AvatarWithName.css';
 import { BASE_URI } from '#/lib/constants';
 import type { User } from '#/lib/types';
 import useAPI from '#/lib/useAPI';

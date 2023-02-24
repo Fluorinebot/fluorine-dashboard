@@ -4,11 +4,11 @@ import { MdLeaderboard, MdPeople, MdPerson } from 'react-icons/md';
 
 export default function HomeMenu() {
     const tabs: TabObject[] = [
-        { tabName: 'User Settings', tabIcon: MdPerson, tabURI: '/', end: true },
-        { tabName: 'Server Settings', tabIcon: MdPeople, tabURI: '/guilds' },
+        { tabName: 'User Settings', TabIcon: MdPerson, tabURI: '/', end: true },
+        { tabName: 'Server Settings', TabIcon: MdPeople, tabURI: '/guilds' },
         {
             tabName: 'Leaderboards',
-            tabIcon: MdLeaderboard,
+            TabIcon: MdLeaderboard,
             tabURI: '/leaderboards'
         }
     ];

@@ -77,7 +77,7 @@ const Guild: React.FC<{ disclosureProps: UseDisclosureReturn }> = ({ disclosureP
                     </Sidebar>
 
                     <Box as="main" padding={4} height="100%">
-                        <Outlet />
+                        {jsx}
                     </Box>
                 </Box>
             ) : (

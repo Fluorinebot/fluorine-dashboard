@@ -1,4 +1,3 @@
-// import '#/assets/components/sidebars/TabsList.css';
 import { ErrorType } from '#/lib/types';
 import { Box, Center, Flex, Heading, Icon, Image, List, Spinner, Text } from '@chakra-ui/react';
 import { MdArrowBack, MdError, MdHistory, MdSettings } from 'react-icons/md';
@@ -31,15 +30,15 @@ export default function TabsList({
         {
             tabName: 'Back',
             tabURI: isGuildBackURI ? `/guilds/${id}/${currLocation}` : `/guilds`,
-            tabIcon: MdArrowBack,
+            TabIcon: MdArrowBack,
             end: true
         },
         {
             tabName: 'Cases',
             tabURI: `/guilds/${id}/cases`,
-            tabIcon: MdHistory
+            TabIcon: MdHistory
         },
-        { tabName: 'Logging Options', tabURI: `/guilds/${id}/logging`, tabIcon: MdSettings }
+        { tabName: 'Logging Options', tabURI: `/guilds/${id}/logging`, TabIcon: MdSettings }
     ];
 
     if (loading) {

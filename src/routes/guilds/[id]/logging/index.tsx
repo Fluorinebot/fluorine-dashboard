@@ -16,7 +16,7 @@ import {
     Text,
     useToast
 } from '@chakra-ui/react';
-import { AsyncSelect, Select } from 'chakra-react-select';
+import { Select } from 'chakra-react-select';
 import { Formik } from 'formik';
 import { useParams } from 'react-router-dom';
 
