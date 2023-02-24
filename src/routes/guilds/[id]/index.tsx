@@ -3,7 +3,7 @@ import Sidebar from '#/components/Sidebar';
 import TabsList from '#/components/sidebars/TabsList';
 import { BASE_URI } from '#/lib/constants';
 import useAPI from '#/lib/useAPI';
-import { Box, Flex, Spinner, UseDisclosureReturn } from '@chakra-ui/react';
+import { Box, Center, Flex, Spinner, UseDisclosureReturn } from '@chakra-ui/react';
 import { useMediaQuery } from 'react-responsive';
 import { Outlet, useParams } from 'react-router-dom';
 
@@ -11,6 +11,7 @@ const getIcon = (id: string, icon?: string) =>
     icon
         ? `https://cdn.discordapp.com/icons/${id}/${icon}.${icon.endsWith('_a') ? 'gif' : 'webp'}?size=48`
         : `https://cdn.discordapp.com/embed/avatars/${BigInt(id) % BigInt(5)}.png?size=48`;
+
 const Guild: React.FC<{ disclosureProps: UseDisclosureReturn }> = ({ disclosureProps }) => {
     const params = useParams();
     const { data, error, loading, code } = useAPI<any>(`${BASE_URI}/guilds/${params.id}`);
@@ -19,7 +20,11 @@ const Guild: React.FC<{ disclosureProps: UseDisclosureReturn }> = ({ disclosureP
     let jsx;
 
     if (loading) {
-        jsx = <Spinner />;
+        jsx = (
+            <Center width="100%" height="100vh">
+                <Spinner />
+            </Center>
+        );
     }
 
     if (error) {
@@ -32,7 +37,6 @@ const Guild: React.FC<{ disclosureProps: UseDisclosureReturn }> = ({ disclosureP
                     message="You are not allowed to edit that server."
                     button="Go back"
                     link="/guilds"
-                    isInternal
                 />
             );
         } else if (code === 404) {
@@ -42,11 +46,10 @@ const Guild: React.FC<{ disclosureProps: UseDisclosureReturn }> = ({ disclosureP
                     message="That server does not exist, or does not have Fluorine."
                     button="Go back"
                     link="/guilds"
-                    isInternal
                 />
             );
         } else {
-            jsx = <ErrorMessage heading="Something went wrong!" message="Please try again." isInternal />;
+            jsx = <ErrorMessage heading="Something went wrong!" message="Please try again." />;
         }
     }
 
@@ -73,7 +76,7 @@ const Guild: React.FC<{ disclosureProps: UseDisclosureReturn }> = ({ disclosureP
                         />
                     </Sidebar>
 
-                    <Box as="main" padding={4}>
+                    <Box as="main" padding={4} height="100%">
                         <Outlet />
                     </Box>
                 </Box>
@@ -91,7 +94,7 @@ const Guild: React.FC<{ disclosureProps: UseDisclosureReturn }> = ({ disclosureP
                             />
                         </Sidebar>
                     </Box>
-                    <Box as="main" flex="80%" padding={4} maxHeight="100vh" overflowY="scroll">
+                    <Box as="main" flex="80%" padding={4} height="100vh" overflowY="scroll">
                         <Box>{jsx}</Box>
                     </Box>
                 </Flex>

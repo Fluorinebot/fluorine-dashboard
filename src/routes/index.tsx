@@ -10,6 +10,7 @@ import {
     Flex,
     FormControl,
     FormErrorMessage,
+    FormHelperText,
     FormLabel,
     Heading,
     Icon,
@@ -129,7 +130,11 @@ const Home: React.FC<{}> = ({}) => {
     });
 
     if (loading) {
-        return <Spinner />;
+        return (
+            <Center width="100%" height="100vh">
+                <Spinner />
+            </Center>
+        );
     }
 
     if (error && code !== 404) {
@@ -169,19 +174,20 @@ const Home: React.FC<{}> = ({}) => {
                         <Flex direction={'column'} gap={4}>
                             <FormControl isInvalid={Boolean(formik.touched.description && formik.errors.description)}>
                                 <FormLabel>Description</FormLabel>
+
                                 <Textarea
                                     id="description"
                                     name="description"
                                     onChange={formik.handleChange}
                                     value={formik.values.description}
                                 />
-                                {formik.touched.description && formik.errors.description ? (
-                                    <FormErrorMessage>{formik.errors.description}</FormErrorMessage>
-                                ) : null}
+
+                                <FormErrorMessage>{formik.errors.description}</FormErrorMessage>
                             </FormControl>
 
                             <FormControl isInvalid={Boolean(formik.touched.pronouns && formik.errors.pronouns)}>
                                 <FormLabel>Pronouns</FormLabel>
+
                                 <Input
                                     type="text"
                                     id="pronouns"
@@ -189,13 +195,13 @@ const Home: React.FC<{}> = ({}) => {
                                     onChange={formik.handleChange}
                                     value={formik.values.pronouns}
                                 />
-                                {formik.touched.pronouns && formik.errors.pronouns ? (
-                                    <FormErrorMessage>{formik.errors.pronouns}</FormErrorMessage>
-                                ) : null}
+
+                                <FormErrorMessage>{formik.errors.pronouns}</FormErrorMessage>
                             </FormControl>
 
                             <FormControl isInvalid={Boolean(formik.touched.birthday && formik.errors.birthday)}>
                                 <FormLabel>Birthday</FormLabel>
+
                                 <Input
                                     type="text"
                                     id="birthday"
@@ -203,13 +209,14 @@ const Home: React.FC<{}> = ({}) => {
                                     onChange={formik.handleChange}
                                     value={formik.values.birthday}
                                 />
-                                {formik.touched.birthday && formik.errors.birthday ? (
-                                    <FormErrorMessage>{formik.errors.birthday}</FormErrorMessage>
-                                ) : null}
+
+                                <FormHelperText>Use DD/MM format, no leading zeros.</FormHelperText>
+                                <FormErrorMessage>{formik.errors.birthday}</FormErrorMessage>
                             </FormControl>
 
                             <FormControl isInvalid={Boolean(formik.touched.website && formik.errors.website)}>
                                 <FormLabel>Website</FormLabel>
+
                                 <Input
                                     type="text"
                                     id="website"
@@ -217,9 +224,8 @@ const Home: React.FC<{}> = ({}) => {
                                     onChange={formik.handleChange}
                                     value={formik.values.website}
                                 />
-                                {formik.touched.website && formik.errors.website ? (
-                                    <FormErrorMessage>{formik.errors.website}</FormErrorMessage>
-                                ) : null}
+
+                                <FormErrorMessage>{formik.errors.website}</FormErrorMessage>
                             </FormControl>
 
                             <FormControl isInvalid={Boolean(formik.touched.location && formik.errors.location)}>
@@ -231,9 +237,7 @@ const Home: React.FC<{}> = ({}) => {
                                     onChange={formik.handleChange}
                                     value={formik.values.location}
                                 />
-                                {formik.touched.location && formik.errors.location ? (
-                                    <FormErrorMessage>{formik.errors.location}</FormErrorMessage>
-                                ) : null}
+                                <FormErrorMessage>{formik.errors.location}</FormErrorMessage>
                             </FormControl>
 
                             <Button

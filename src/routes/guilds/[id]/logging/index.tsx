@@ -4,17 +4,19 @@ import useAPI from '#/lib/useAPI';
 import {
     Box,
     Button,
-    Checkbox,
+    Center,
     Divider,
     Flex,
-    FormControl, FormLabel,
+    FormControl,
+    FormLabel,
     Heading,
-    Input,
     Spinner,
     Stack,
+    Switch,
     Text,
     useToast
 } from '@chakra-ui/react';
+import { AsyncSelect, Select } from 'chakra-react-select';
 import { Formik } from 'formik';
 import { useParams } from 'react-router-dom';
 
@@ -27,13 +29,23 @@ interface Config {
 const Logging: React.FC<{}> = ({}) => {
     const params = useParams();
     const { data, loading, error, code } = useAPI<Config>(`${BASE_URI}/guilds/${params.id}`);
+    const {
+        data: channels,
+        loading: channelsLoading,
+        error: channelsError
+    } = useAPI<any[]>(`${BASE_URI}/guilds/${params.id}/channels`);
+
     const toast = useToast();
 
-    if (loading) {
-        return <Spinner />;
+    if (loading || channelsLoading) {
+        return (
+            <Center width="100%" height="100vh">
+                <Spinner size="xl" color="fixedBlue.100" />
+            </Center>
+        );
     }
 
-    if (error) {
+    if (error || channelsError) {
         if (code === 401) {
             return <AuthorizeError />;
         }
@@ -41,9 +53,9 @@ const Logging: React.FC<{}> = ({}) => {
         return <p>An error has occured.</p>;
     }
 
-    if (data) {
+    if (data && channels) {
         return (
-            <Box width={['full', 'full', `${50 + 25 / 2}%`]}>
+            <Box width={['full', 'full', `${50 + 25 / 2}%`]} height="100vh">
                 <Flex direction={'column'} gap={2}>
                     <Heading as="h2" size="xl" fontWeight={800}>
                         Logging
@@ -59,7 +71,7 @@ const Logging: React.FC<{}> = ({}) => {
                     initialValues={{
                         logsEnabled: data.logsEnabled,
                         logModerationActions: data.logModerationActions,
-                        logsChannel: data.logsChannel ?? ''
+                        logsChannel: data.logsChannel
                     }}
                     onSubmit={(values, actions) => {
                         setTimeout(async () => {
@@ -97,17 +109,17 @@ const Logging: React.FC<{}> = ({}) => {
                         return (
                             <form onSubmit={props.handleSubmit}>
                                 <Stack spacing={4} direction="column">
-                                    <Checkbox
+                                    <Switch
                                         id="logsEnabled"
                                         name="logsEnabled"
                                         onChange={props.handleChange}
                                         checked={props.values.logsEnabled}
                                         colorScheme="brand"
                                     >
-                                        Enable logs?
-                                    </Checkbox>
+                                        Log messages [edits/deletes]
+                                    </Switch>
 
-                                    <Checkbox
+                                    <Switch
                                         id="logModerationActions"
                                         name="logModerationActions"
                                         onChange={props.handleChange}
@@ -115,16 +127,24 @@ const Logging: React.FC<{}> = ({}) => {
                                         disabled={!props.values.logsEnabled}
                                         colorScheme="brand"
                                     >
-                                        Log moderation actions
-                                    </Checkbox>
+                                        Log cases
+                                    </Switch>
+
                                     <FormControl>
                                         <FormLabel>Logs Channel</FormLabel>
-                                        <Input
-                                            type="text"
+                                        <Select
+                                            options={channels}
                                             id="logsChannel"
                                             name="logsChannel"
-                                            onChange={props.handleChange}
-                                            value={props.values.logsChannel}
+                                            placeholder="Select channel"
+                                            size="md"
+                                            onChange={(value: any) => props.handleChange('logsChannel')(value.id)}
+                                            value={channels.find(
+                                                (channel: any) => channel.id === props.values.logsChannel
+                                            )}
+                                            getOptionLabel={(option: any) => `#${option.name}`}
+                                            getOptionValue={(option: any) => option.id}
+                                            colorScheme="brand"
                                         />
                                     </FormControl>
 

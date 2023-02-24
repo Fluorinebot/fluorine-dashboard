@@ -8,9 +8,9 @@ export const ErrorMessage: React.FC<{
     heading: string;
     message: string;
     link?: string;
-    isInternal?: boolean;
+    isExternal?: boolean;
     button?: string;
-}> = ({ link, message, heading, isInternal, button }) => {
+}> = ({ link, message, heading, isExternal, button }) => {
     return (
         <Center height={'100vh'} width={'100%'}>
             <Flex gap={2}>
@@ -19,12 +19,12 @@ export const ErrorMessage: React.FC<{
                     <Heading size="md">{heading}</Heading>
                     <Text size="md">{message}</Text>
 
-                    {isInternal ? (
-                        <Button as={Link} marginTop={2} to={link ?? '/'} colorScheme="brand">
+                    {isExternal ? (
+                        <Button as="a" marginTop={2} href={link ?? '/'} colorScheme="brand">
                             {button ?? 'Return to home'}
                         </Button>
                     ) : (
-                        <Button as="a" marginTop={2} href={link ?? '/'} colorScheme="brand">
+                        <Button as={Link} marginTop={2} to={link ?? '/'} colorScheme="brand">
                             {button ?? 'Return to home'}
                         </Button>
                     )}
@@ -80,7 +80,7 @@ export class ContentBoundary extends Component<PropsWithChildren, { hasError: bo
     render() {
         if (this.state.hasError) {
             return <ErrorMessage heading="Something went wrong!" message="An error has occured." />;
-        }
+        }   
 
         return this.props.children;
     }
@@ -89,9 +89,9 @@ export class ContentBoundary extends Component<PropsWithChildren, { hasError: bo
 export const AuthorizeError: React.FC = () => {
     return (
         <ErrorMessage
+            isExternal
             heading="You aren't logged in!"
             message="To continue, you must login with Discord"
-            isInternal={false}
             button="Continue with Discord"
             link={`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify%20guilds`}
         />

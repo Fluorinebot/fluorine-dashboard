@@ -2,7 +2,7 @@ import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import GuildCard from '#/components/GuildCard';
 import { BASE_URI } from '#/lib/constants';
 import useAPI from '#/lib/useAPI';
-import { Box, Divider, Flex, Grid, GridItem, Spinner, Text } from '@chakra-ui/react';
+import { Box, Center, Divider, Flex, Grid, GridItem, Spinner, Text } from '@chakra-ui/react';
 import { APIGuild } from 'discord-api-types/v10';
 
 const isAllowed = (x: APIGuild & { fluorine: boolean }) =>
@@ -45,7 +45,11 @@ const GuildSelection: React.FC<{}> = ({}) => {
     );
 
     if (loading) {
-        return <Spinner />;
+        return (
+            <Center width="100%" height="100vh">
+                <Spinner size="xl" color="fixedBlue.100" />
+            </Center>
+        );
     }
 
     if (error) {
@@ -53,7 +57,7 @@ const GuildSelection: React.FC<{}> = ({}) => {
             return <AuthorizeError />;
         }
 
-        return <ErrorMessage heading="Something went wrong!" message="Please try again." isInternal />;
+        return <ErrorMessage heading="Something went wrong!" message="Please try again." link="/guilds" />;
     }
 
     if (data) {

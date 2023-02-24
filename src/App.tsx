@@ -3,7 +3,7 @@ import Home from '#/routes';
 import GuildSelection from '#/routes/guilds';
 import Guild from '#/routes/guilds/[id]';
 import Cases from '#/routes/guilds/[id]/cases';
-import Case from '#/routes/guilds/[id]/cases/[id]';
+import Case from '#/routes/guilds/[id]/cases/[item]';
 import Logging from '#/routes/guilds/[id]/logging';
 import Leaderboard from '#/routes/leaderboard';
 import {
@@ -22,6 +22,7 @@ import { MdArrowUpward, MdDarkMode, MdError, MdLightMode, MdMenu } from 'react-i
 import { useMediaQuery } from 'react-responsive';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ContentBoundary, ErrorMessage } from './components/ErrorBoundary';
+import { CLIENT_ID, REDIRECT_URI } from './lib/constants';
 
 function App() {
     const { colorMode, toggleColorMode } = useColorMode();
@@ -97,11 +98,23 @@ function App() {
 
                     <Route
                         element={
+                            <ErrorMessage
+                                isExternal
+                                heading="You aren't logged in!"
+                                message="To continue, you must login with Discord"
+                                button="Continue with Discord"
+                                link={`https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify%20guilds`}
+                            />
+                        }
+                        path="/403"
+                    />
+
+                    <Route
+                        element={
                             <Center width="100%" height="100vh">
                                 <ErrorMessage
                                     heading="Not found!"
                                     message="Somehow, you were lead here! Sorry for the trouble."
-                                    isInternal
                                 />
                             </Center>
                         }

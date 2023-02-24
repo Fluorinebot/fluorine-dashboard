@@ -20,7 +20,12 @@ const AvatarWithName: React.FC<{ guildId: string; userId: string }> = ({ guildId
     if (error || loading) {
         return (
             <Flex gap={2}>
-                <Image src="https://cdn.discordapp.com/embed/avatars/5.png" h="48px" w="48px" rounded="full" />
+                <Image
+                    src="https://cdn.discordapp.com/embed/avatars/5.png"
+                    h={['36px', '36px', '48px']}
+                    w={['36px', '36px', '48px']}
+                    rounded="full"
+                />
                 <Text size="md" fontWeight={600} colorScheme={'gray'}>
                     {loading && 'Loading User'}
                     {error && 'Unknown User'}#0000
@@ -31,12 +36,17 @@ const AvatarWithName: React.FC<{ guildId: string; userId: string }> = ({ guildId
 
     if (data) {
         return (
-            <Flex gap={2}>
-                <Image src={getIcon(userId, data.tag, data.avatar)} h="48px" w="48px" rounded="full" />
+            <Flex gap={2} alignItems="center">
+                <Image
+                    src={getIcon(userId, data.tag, data.avatar)}
+                    h={['36px', '36px', '48px']}
+                    w={['36px', '36px', '48px']}
+                    rounded="full"
+                />
                 <Box>
                     {data.nickname ? (
                         <Box>
-                            <Text fontWeight={600} size="lg">
+                            <Text fontWeight={600} size="lg" wordBreak={'break-all'}>
                                 {data.nickname}
                             </Text>{' '}
                             <Text color={'gray'} size="md">
@@ -44,7 +54,7 @@ const AvatarWithName: React.FC<{ guildId: string; userId: string }> = ({ guildId
                             </Text>
                         </Box>
                     ) : (
-                        <Text size="lg" fontWeight={600}>
+                        <Text size="lg" fontWeight={600} wordBreak="break-all">
                             {data.tag}
                         </Text>
                     )}

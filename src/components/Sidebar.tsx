@@ -12,7 +12,7 @@ import {
     Flex,
     Heading,
     IconButton,
-    Image,
+    Avatar,
     Link,
     Text,
     useColorMode,
@@ -23,7 +23,7 @@ import {
 import { APIUser } from 'discord-api-types/v10';
 import { MdDarkMode, MdLightMode, MdLogout } from 'react-icons/md';
 import { useMediaQuery } from 'react-responsive';
-import { Link as RouteTo } from 'react-router-dom';
+import { Link as RouteTo, useNavigate } from 'react-router-dom';
 
 const getIcon = (id: string, icon: string | null, discrim: string) =>
     icon
@@ -37,10 +37,15 @@ const Sidebar: React.FC<{
     const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
     const { colorMode, toggleColorMode } = useColorMode();
     const toast = useToast();
+    const navigate = useNavigate();
 
     const { loading, data, error, code } = useAPI<APIUser>(`${BASE_URI}/user`, { method: 'GET' });
 
+    if (error || loading || !data) {
+    }
+
     let name: string = '';
+    let originalName = 'Fluorine Dashboard';
     let iconURL: string = '';
 
     if (error || loading) {
@@ -49,7 +54,8 @@ const Sidebar: React.FC<{
         }
 
         if (error) {
-            name = 'Unknown User#0000';
+            navigate('/403');
+            return <></>;
         }
 
         iconURL = 'https://cdn.discordapp.com/embed/avatars/5.png';
@@ -58,6 +64,7 @@ const Sidebar: React.FC<{
     if (data) {
         iconURL = getIcon(data.id, data.avatar, data.discriminator);
         name = `${data.username}#${data.discriminator}`;
+        originalName = data.username;
     }
 
     const buttons = (
@@ -97,13 +104,13 @@ const Sidebar: React.FC<{
 
                     <DrawerFooter>
                         <Flex justifyContent="space-between" alignItems="center" flex="1">
-                            <Flex gap="2">
-                                <Image w={'12'} h={'12'} src={iconURL} alt="" rounded={'full'} />
-                                <Box marginBlock={'auto'}>
+                            <Flex gap="2" alignItems="center">
+                                <Avatar w={'12'} h={'12'} src={iconURL} name={originalName} rounded={'full'} />
+                                <Box>
                                     <Text color="gray" size="xs">
                                         Logged in as
                                     </Text>
-                                    <Heading as="h5" size="sm">
+                                    <Heading as="h5" size="sm" wordBreak="break-all">
                                         {name}
                                     </Heading>
                                 </Box>
@@ -138,20 +145,20 @@ const Sidebar: React.FC<{
                 {children}
             </Box>
 
-            <Flex justifyContent="space-between">
-                <Flex gap="2">
-                    <Image w={'12'} h={'12'} src={iconURL} alt="" rounded={'full'} />
-                    <Box marginBlock={'auto'}>
+            <Flex justifyContent="space-between" alignItems="center">
+                <Flex gap="2" alignItems="center">
+                    <Avatar w={'12'} h={'12'} src={iconURL} name={originalName} rounded={'full'} />
+                    <Box>
                         <Text color="gray" size="xs">
                             Logged in as
                         </Text>
-                        <Heading as="h5" size="sm">
+                        <Heading as="h5" size="sm" wordBreak="break-all">
                             {name}
                         </Heading>
                     </Box>
                 </Flex>
 
-                <Flex justifyContent="flex-end" gap={2} marginBlock="auto">
+                <Flex justifyContent="flex-end" gap={2}>
                     {buttons}
                 </Flex>
             </Flex>

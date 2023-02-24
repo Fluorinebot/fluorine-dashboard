@@ -4,7 +4,26 @@ import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import { BASE_URI } from '#/lib/constants';
 import type { Case } from '#/lib/types';
 import useAPI from '#/lib/useAPI';
-import { Box, Flex, Heading, Spinner, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+    Box,
+    Card,
+    CardBody,
+    CardHeader,
+    Center,
+    Flex,
+    Heading,
+    IconButton,
+    Link,
+    Spinner,
+    Table,
+    TableContainer,
+    Tbody,
+    Td,
+    Text,
+    Th,
+    Thead,
+    Tr
+} from '@chakra-ui/react';
 import {
     createColumnHelper,
     flexRender,
@@ -16,9 +35,16 @@ import {
     useReactTable
 } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
-import { MdArrowDownward, MdArrowUpward } from 'react-icons/md';
+import {
+    MdArrowDownward, MdArrowUpward,
+    MdChevronLeft,
+    MdChevronRight,
+    MdFirstPage,
+    MdLastPage,
+    MdOpenInNew
+} from 'react-icons/md';
 import { useMediaQuery } from 'react-responsive';
-import { Link, Outlet, useParams } from 'react-router-dom';
+import { Link as RouteTo, useParams } from 'react-router-dom';
 
 function toTitleCase(str: string) {
     return str
@@ -32,21 +58,19 @@ function toTitleCase(str: string) {
 
 const TableNavigation: React.FC<{ table: TableType<Case> }> = ({ table }) => {
     return (
-        <div className="CasesPagination">
-            <button
-                className="Button Button--Secondary"
+        <Flex alignItems="center" justifyContent={'center'} gap="2">
+            <IconButton
+                icon={<MdFirstPage size="24" />}
+                aria-label="First page"
                 onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
-            >
-                {'<<'}
-            </button>
-            <button
-                className="Button Button--Secondary"
+                isDisabled={!table.getCanPreviousPage()}
+            />
+            <IconButton
+                icon={<MdChevronLeft size="24" />}
+                aria-label="Previous page"
                 onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-            >
-                {'<'}
-            </button>
+                isDisabled={!table.getCanPreviousPage()}
+            />
             <p>
                 Page
                 <b>
@@ -54,21 +78,19 @@ const TableNavigation: React.FC<{ table: TableType<Case> }> = ({ table }) => {
                     {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
                 </b>
             </p>
-            <button
-                className="Button Button--Secondary"
+            <IconButton
+                icon={<MdChevronRight size="24" />}
+                aria-label="Next page"
                 onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-            >
-                {'>'}
-            </button>
-            <button
-                className="Button Button--Secondary"
+                isDisabled={!table.getCanNextPage()}
+            />
+            <IconButton
+                icon={<MdLastPage size="24" />}
+                aria-label="Last page"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-            >
-                {'>>'}
-            </button>
-        </div>
+                isDisabled={!table.getCanNextPage()}
+            />
+        </Flex>
     );
 };
 
@@ -84,15 +106,9 @@ export default function Cases() {
         columnHelper.accessor('caseId', {
             header: 'Case ID',
             cell: cell => (
-                <>
-                    {cell.getValue()}{' '}
-                    <Link
-                        className="Utils__FluorineBlue"
-                        to={`/guilds/${cell.row.original.guildId}/cases/${cell.getValue()}`}
-                    >
-                        Open
-                    </Link>
-                </>
+                <Link as={RouteTo} to={`/guilds/${cell.row.original.guildId}/cases/${cell.getValue()}`} color="brand">
+                    {cell.getValue()}
+                </Link>
             )
         }),
         columnHelper.accessor('type', {
@@ -118,16 +134,6 @@ export default function Cases() {
                     [getValue()]
                 );
             }
-        }),
-        columnHelper.accessor('reason', {
-            header: 'Case Reason',
-            cell: ({ getValue }) => {
-                return (
-                    <Box as="span" wordBreak="break-all">
-                        {getValue()}
-                    </Box>
-                );
-            }
         })
     ];
 
@@ -149,7 +155,11 @@ export default function Cases() {
     });
 
     if (loading) {
-        return <Spinner />;
+        return (
+            <Center width="100%" height="100vh">
+                <Spinner size="xl" color="fixedBlue.100" />
+            </Center>
+        );
     }
 
     if (error) {
@@ -161,7 +171,7 @@ export default function Cases() {
             <ErrorMessage
                 heading="Something went wrong"
                 message="The cases for this server could not be loaded."
-                isInternal
+                link="/guilds"
             />
         );
     }
@@ -175,23 +185,66 @@ export default function Cases() {
                             Cases
                         </Heading>
                         <Text size="md" fontWeight={400}>
-                            View all moderation cases logged for this server. (you're on mobile thats why no cases! )
+                            View all moderation cases logged for this server.
                         </Text>
+                    </Flex>
+                    <Flex gap={2} direction={'column'}>
+                        {table.getRowModel().rows.map(currCase => (
+                            <Card key={currCase.original.caseId}>
+                                <CardHeader>
+                                    <Flex gap={2} justifyContent="space-between" alignItems="center">
+                                        <Text size="md" fontWeight={600}>
+                                            Case #{currCase.original.caseId}
+                                        </Text>
+
+                                        <RouteTo
+                                            to={`/guilds/${currCase.original.guildId}/cases/${currCase.original.caseId}`}
+                                        >
+                                            <IconButton aria-label="Open Case" size="sm" icon={<MdOpenInNew />} />
+                                        </RouteTo>
+                                    </Flex>
+                                </CardHeader>
+                                <CardBody>
+                                    <Flex gap={3} direction={'column'}>
+                                        <Flex>
+                                            <Text size="md" fontWeight={600} flex="25%" color="gray" marginBlock="auto">
+                                                Moderator
+                                            </Text>
+                                            <Box flex="75%">
+                                                <AvatarWithName
+                                                    guildId={currCase.original.guildId}
+                                                    userId={currCase.original.caseCreator}
+                                                />
+                                            </Box>
+                                        </Flex>
+                                        <Flex>
+                                            <Text size="md" fontWeight={600} flex="25%" color="gray" marginBlock="auto">
+                                                Offending User
+                                            </Text>
+                                            <Box flex="75%">
+                                                <AvatarWithName
+                                                    guildId={currCase.original.guildId}
+                                                    userId={currCase.original.moderatedUser}
+                                                />
+                                            </Box>
+                                        </Flex>
+                                    </Flex>
+                                </CardBody>
+                            </Card>
+                        ))}
                     </Flex>
                 </>
             );
         }
 
         return (
-            <>
-                <Flex direction={'column'} gap={2} marginBottom={4}>
-                    <Heading as="h2" size="xl" fontWeight={800}>
-                        Cases
-                    </Heading>
-                    <Text size="md" fontWeight={400}>
-                        View all moderation cases logged for this server.
-                    </Text>
-                </Flex>
+            <Flex direction={'column'} gap={2} marginBottom={4}>
+                <Heading as="h2" size="xl" fontWeight={800}>
+                    Cases
+                </Heading>
+                <Text size="md" fontWeight={400}>
+                    View all moderation cases logged for this server.
+                </Text>
 
                 <TableContainer>
                     <Table variant="simple" maxWidth={'100%'}>
@@ -247,7 +300,7 @@ export default function Cases() {
                     <p className="CasesTable__NoCases">There are no cases to show.</p>
                 )}
                 <TableNavigation table={table} />
-            </>
+            </Flex>
         );
     }
 
