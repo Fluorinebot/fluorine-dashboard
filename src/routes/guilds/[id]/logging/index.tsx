@@ -1,4 +1,4 @@
-import { AuthorizeError } from '#/components/ErrorBoundary';
+import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import { BASE_URI } from '#/lib/constants';
 import useAPI from '#/lib/useAPI';
 import {
@@ -26,7 +26,7 @@ interface Config {
     logsChannel?: string;
 }
 
-const Logging: React.FC<{}> = ({}) => {
+const Logging: React.FC = () => {
     const params = useParams();
     const { data, loading, error, code } = useAPI<Config>(`${BASE_URI}/guilds/${params.id}`);
     const {
@@ -50,7 +50,7 @@ const Logging: React.FC<{}> = ({}) => {
             return <AuthorizeError />;
         }
 
-        return <p>An error has occured.</p>;
+        return <ErrorMessage heading="Something went wrong" message="This tab could not be loaded" link="/guilds" />;
     }
 
     if (data && channels) {
@@ -105,63 +105,59 @@ const Logging: React.FC<{}> = ({}) => {
                     }}
                     enableReinitialize
                 >
-                    {props => {
-                        return (
-                            <form onSubmit={props.handleSubmit}>
-                                <Stack spacing={4} direction="column">
-                                    <Switch
-                                        id="logsEnabled"
-                                        name="logsEnabled"
-                                        onChange={props.handleChange}
-                                        checked={props.values.logsEnabled}
+                    {props => (
+                        <form onSubmit={props.handleSubmit}>
+                            <Stack spacing={4} direction="column">
+                                <Switch
+                                    id="logsEnabled"
+                                    name="logsEnabled"
+                                    onChange={props.handleChange}
+                                    checked={props.values.logsEnabled}
+                                    colorScheme="brand"
+                                >
+                                    Log messages [edits/deletes]
+                                </Switch>
+
+                                <Switch
+                                    id="logModerationActions"
+                                    name="logModerationActions"
+                                    onChange={props.handleChange}
+                                    checked={props.values.logModerationActions}
+                                    disabled={!props.values.logsEnabled}
+                                    colorScheme="brand"
+                                >
+                                    Log cases
+                                </Switch>
+
+                                <FormControl isDisabled={!props.values.logsEnabled}>
+                                    <FormLabel>Logs Channel</FormLabel>
+                                    <Select
+                                        options={channels}
+                                        id="logsChannel"
+                                        name="logsChannel"
+                                        placeholder="Select channel"
+                                        size="md"
+                                        onChange={(value: any) => props.handleChange('logsChannel')(value.id)}
+                                        value={channels.find((channel: any) => channel.id === props.values.logsChannel)}
+                                        getOptionLabel={(option: any) => `#${option.name}`}
+                                        getOptionValue={(option: any) => option.id}
                                         colorScheme="brand"
-                                    >
-                                        Log messages [edits/deletes]
-                                    </Switch>
+                                    />
+                                </FormControl>
 
-                                    <Switch
-                                        id="logModerationActions"
-                                        name="logModerationActions"
-                                        onChange={props.handleChange}
-                                        checked={props.values.logModerationActions}
-                                        disabled={!props.values.logsEnabled}
-                                        colorScheme="brand"
-                                    >
-                                        Log cases
-                                    </Switch>
-
-                                    <FormControl>
-                                        <FormLabel>Logs Channel</FormLabel>
-                                        <Select
-                                            options={channels}
-                                            id="logsChannel"
-                                            name="logsChannel"
-                                            placeholder="Select channel"
-                                            size="md"
-                                            onChange={(value: any) => props.handleChange('logsChannel')(value.id)}
-                                            value={channels.find(
-                                                (channel: any) => channel.id === props.values.logsChannel
-                                            )}
-                                            getOptionLabel={(option: any) => `#${option.name}`}
-                                            getOptionValue={(option: any) => option.id}
-                                            colorScheme="brand"
-                                        />
-                                    </FormControl>
-
-                                    <Button
-                                        type="submit"
-                                        isLoading={props.isSubmitting}
-                                        loadingText="Saving changes"
-                                        disabled={props.isSubmitting ? props.isSubmitting : props.dirty}
-                                        colorScheme={'brand'}
-                                        width={'fit-content'}
-                                    >
-                                        Save changes
-                                    </Button>
-                                </Stack>
-                            </form>
-                        );
-                    }}
+                                <Button
+                                    type="submit"
+                                    isLoading={props.isSubmitting}
+                                    loadingText="Saving changes"
+                                    disabled={props.isSubmitting ? props.isSubmitting : props.dirty}
+                                    colorScheme={'brand'}
+                                    width={'fit-content'}
+                                >
+                                    Save changes
+                                </Button>
+                            </Stack>
+                        </form>
+                    )}
                 </Formik>
             </Box>
         );

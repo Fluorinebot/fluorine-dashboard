@@ -1,15 +1,12 @@
-import { AuthorizeError } from '#/components/ErrorBoundary';
+import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import GuildCard from '#/components/GuildCard';
-import { Box, Center, Divider, Flex, Grid, GridItem, Spinner, Text } from '@chakra-ui/react';
 import { BASE_URI } from '#/lib/constants';
+import type { FluorineGuild } from '#/lib/types';
 import useAPI from '#/lib/useAPI';
-import { APIGuild } from 'discord-api-types/v10';
+import { Center, Divider, Grid, GridItem, Spinner, Text } from '@chakra-ui/react';
 
-const Leaderboard: React.FC<{}> = ({}) => {
-    const { loading, data, error, code } = useAPI<{ guilds: (APIGuild & { fluorine: boolean })[] }>(
-        `${BASE_URI}/guilds`,
-        { method: 'GET' }
-    );
+const Leaderboard: React.FC = () => {
+    const { loading, data, error, code } = useAPI<{ guilds: FluorineGuild[] }>(`${BASE_URI}/guilds`, { method: 'GET' });
 
     if (loading) {
         return (
@@ -24,7 +21,7 @@ const Leaderboard: React.FC<{}> = ({}) => {
             return <AuthorizeError />;
         }
 
-        return <p className="Utils__NoticeBox">There was an error loading your servers, try again.</p>;
+        return <ErrorMessage heading="Something went wrong!" message="Please try again." />;
     }
 
     if (data) {
@@ -51,8 +48,12 @@ const Leaderboard: React.FC<{}> = ({}) => {
                 >
                     {guildsWithFluorine
                         .sort((x, y) => {
-                            if (x.name.toLowerCase() < y.name.toLowerCase()) return -1;
-                            if (x.name.toLowerCase() > y.name.toLowerCase()) return 1;
+                            if (x.name.toLowerCase() < y.name.toLowerCase()) {
+                                return -1;
+                            }
+                            if (x.name.toLowerCase() > y.name.toLowerCase()) {
+                                return 1;
+                            }
                             return 0;
                         })
                         .map(guild => (

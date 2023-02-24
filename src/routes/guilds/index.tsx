@@ -1,14 +1,13 @@
 import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import GuildCard from '#/components/GuildCard';
 import { BASE_URI } from '#/lib/constants';
+import type { FluorineGuild } from '#/lib/types';
 import useAPI from '#/lib/useAPI';
 import { Box, Center, Divider, Flex, Grid, GridItem, Spinner, Text } from '@chakra-ui/react';
-import { APIGuild } from 'discord-api-types/v10';
 
-const isAllowed = (x: APIGuild & { fluorine: boolean }) =>
-    (Number(x.permissions) & 0x8) === 0x8 || (Number(x.permissions) & 0x20) === 32;
+const isAllowed = (x: FluorineGuild) => (Number(x.permissions) & 0x8) === 0x8 || (Number(x.permissions) & 0x20) === 32;
 
-function GuildSection({ header, data }: { header: string; data: (APIGuild & { fluorine: boolean })[] }) {
+function GuildSection({ header, data }: { header: string; data: FluorineGuild[] }) {
     return (
         <Box>
             <Text fontSize={'lg'} as="h2" fontWeight={800} colorScheme="whiteAlpha" marginBottom={2}>
@@ -24,8 +23,12 @@ function GuildSection({ header, data }: { header: string; data: (APIGuild & { fl
             >
                 {data
                     .sort((x, y) => {
-                        if (x.name.toLowerCase() < y.name.toLowerCase()) return -1;
-                        if (x.name.toLowerCase() > y.name.toLowerCase()) return 1;
+                        if (x.name.toLowerCase() < y.name.toLowerCase()) {
+                            return -1;
+                        }
+                        if (x.name.toLowerCase() > y.name.toLowerCase()) {
+                            return 1;
+                        }
                         return 0;
                     })
                     .map(guild => (
@@ -38,11 +41,8 @@ function GuildSection({ header, data }: { header: string; data: (APIGuild & { fl
     );
 }
 
-const GuildSelection: React.FC<{}> = ({}) => {
-    const { loading, data, error, code } = useAPI<{ guilds: (APIGuild & { fluorine: boolean })[] }>(
-        `${BASE_URI}/guilds`,
-        { method: 'GET' }
-    );
+const GuildSelection: React.FC = () => {
+    const { loading, data, error, code } = useAPI<{ guilds: FluorineGuild[] }>(`${BASE_URI}/guilds`, { method: 'GET' });
 
     if (loading) {
         return (
@@ -57,7 +57,7 @@ const GuildSelection: React.FC<{}> = ({}) => {
             return <AuthorizeError />;
         }
 
-        return <ErrorMessage heading="Something went wrong!" message="Please try again." link="/guilds" />;
+        return <ErrorMessage heading="Something went wrong!" message="Please try again." />;
     }
 
     if (data) {

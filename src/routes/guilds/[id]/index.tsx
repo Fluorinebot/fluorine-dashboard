@@ -1,18 +1,21 @@
 import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import Sidebar from '#/components/Sidebar';
-import TabsList from '#/components/sidebars/TabsList';
+import TabsList from '#/components/sidebars/GuildWithIDSidebar';
 import { BASE_URI } from '#/lib/constants';
 import useAPI from '#/lib/useAPI';
-import { Box, Center, Flex, Spinner, UseDisclosureReturn } from '@chakra-ui/react';
+import { Box, Center, Flex, Spinner } from '@chakra-ui/react';
 import { useMediaQuery } from 'react-responsive';
 import { Outlet, useParams } from 'react-router-dom';
 
-const getIcon = (id: string, icon?: string) =>
-    icon
+const getIcon = (id: string, icon?: string) => {
+    const ret = icon
         ? `https://cdn.discordapp.com/icons/${id}/${icon}.${icon.endsWith('_a') ? 'gif' : 'webp'}?size=48`
         : `https://cdn.discordapp.com/embed/avatars/${BigInt(id) % BigInt(5)}.png?size=48`;
 
-const Guild: React.FC<{ disclosureProps: UseDisclosureReturn }> = ({ disclosureProps }) => {
+    return ret;
+};
+
+const Guild: React.FC = () => {
     const params = useParams();
     const { data, error, loading, code } = useAPI<any>(`${BASE_URI}/guilds/${params.id}`);
 
@@ -65,7 +68,7 @@ const Guild: React.FC<{ disclosureProps: UseDisclosureReturn }> = ({ disclosureP
         <Box overflowY="hidden">
             {isMobile ? (
                 <Box>
-                    <Sidebar disclosureProps={disclosureProps}>
+                    <Sidebar>
                         <TabsList
                             data={data}
                             error={error}
@@ -83,7 +86,7 @@ const Guild: React.FC<{ disclosureProps: UseDisclosureReturn }> = ({ disclosureP
             ) : (
                 <Flex overflowY="hidden" height="100vh">
                     <Box flex="20%" height="100vh">
-                        <Sidebar disclosureProps={disclosureProps}>
+                        <Sidebar>
                             <TabsList
                                 data={data}
                                 error={error}

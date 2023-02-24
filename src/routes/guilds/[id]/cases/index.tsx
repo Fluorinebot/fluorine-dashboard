@@ -13,6 +13,8 @@ import {
     Heading,
     IconButton,
     Link,
+    List,
+    ListItem,
     Spinner,
     Table,
     TableContainer,
@@ -29,9 +31,9 @@ import {
     getCoreRowModel,
     getPaginationRowModel,
     getSortedRowModel,
-    SortingState,
-    Table as TableType,
-    useReactTable
+    useReactTable,
+    type SortingState,
+    type Table as TableType
 } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 import {
@@ -50,49 +52,45 @@ function toTitleCase(str: string) {
     return str
         .toLowerCase()
         .split(' ')
-        .map(word => {
-            return word.charAt(0).toUpperCase() + word.slice(1);
-        })
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
 }
 
-const TableNavigation: React.FC<{ table: TableType<Case> }> = ({ table }) => {
-    return (
-        <Flex alignItems="center" justifyContent={'center'} gap="2">
-            <IconButton
-                icon={<MdFirstPage size="24" />}
-                aria-label="First page"
-                onClick={() => table.setPageIndex(0)}
-                isDisabled={!table.getCanPreviousPage()}
-            />
-            <IconButton
-                icon={<MdChevronLeft size="24" />}
-                aria-label="Previous page"
-                onClick={() => table.previousPage()}
-                isDisabled={!table.getCanPreviousPage()}
-            />
-            <p>
-                Page
-                <b>
-                    {' '}
-                    {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                </b>
-            </p>
-            <IconButton
-                icon={<MdChevronRight size="24" />}
-                aria-label="Next page"
-                onClick={() => table.nextPage()}
-                isDisabled={!table.getCanNextPage()}
-            />
-            <IconButton
-                icon={<MdLastPage size="24" />}
-                aria-label="Last page"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                isDisabled={!table.getCanNextPage()}
-            />
-        </Flex>
-    );
-};
+const TableNavigation: React.FC<{ table: TableType<Case> }> = ({ table }) => (
+    <Flex alignItems="center" justifyContent={'center'} gap="2">
+        <IconButton
+            icon={<MdFirstPage size="24" />}
+            aria-label="First page"
+            onClick={() => table.setPageIndex(0)}
+            isDisabled={!table.getCanPreviousPage()}
+        />
+        <IconButton
+            icon={<MdChevronLeft size="24" />}
+            aria-label="Previous page"
+            onClick={() => table.previousPage()}
+            isDisabled={!table.getCanPreviousPage()}
+        />
+        <p>
+            Page
+            <b>
+                {' '}
+                {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            </b>
+        </p>
+        <IconButton
+            icon={<MdChevronRight size="24" />}
+            aria-label="Next page"
+            onClick={() => table.nextPage()}
+            isDisabled={!table.getCanNextPage()}
+        />
+        <IconButton
+            icon={<MdLastPage size="24" />}
+            aria-label="Last page"
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            isDisabled={!table.getCanNextPage()}
+        />
+    </Flex>
+);
 
 export default function Cases() {
     const params = useParams();
@@ -102,7 +100,7 @@ export default function Cases() {
     const columnHelper = createColumnHelper<Case>();
     const [sorting, setSorting] = useState<SortingState>([{ id: 'caseId', desc: true }]);
 
-    let columns = [
+    const columns = [
         columnHelper.accessor('caseId', {
             header: 'Case ID',
             cell: cell => (
@@ -113,33 +111,21 @@ export default function Cases() {
         }),
         columnHelper.accessor('type', {
             header: 'Case Type',
-            cell: ({ getValue }) => {
-                return useMemo(() => toTitleCase(getValue()), [getValue()]);
-            }
+            cell: ({ getValue }) => useMemo(() => toTitleCase(getValue()), [getValue()])
         }),
         columnHelper.accessor('caseCreator', {
             header: 'Moderator',
-            cell: ({ getValue, row }) => {
-                return useMemo(
-                    () => <AvatarWithName guildId={row.original.guildId} userId={getValue()} />,
-                    [getValue()]
-                );
-            }
+            cell: ({ getValue, row }) =>
+                useMemo(() => <AvatarWithName guildId={row.original.guildId} userId={getValue()} />, [getValue()])
         }),
         columnHelper.accessor('moderatedUser', {
             header: 'Offender',
-            cell: ({ getValue, row }) => {
-                return useMemo(
-                    () => <AvatarWithName guildId={row.original.guildId} userId={getValue()} />,
-                    [getValue()]
-                );
-            }
+            cell: ({ getValue, row }) =>
+                useMemo(() => <AvatarWithName guildId={row.original.guildId} userId={getValue()} />, [getValue()])
         })
     ];
 
-    const data = useMemo(() => {
-        return caseData ?? [];
-    }, [caseData]);
+    const data = useMemo(() => caseData ?? [], [caseData]);
 
     const table = useReactTable({
         data,
@@ -188,51 +174,66 @@ export default function Cases() {
                             View all moderation cases logged for this server.
                         </Text>
                     </Flex>
-                    <Flex gap={2} direction={'column'}>
+                    <List spacing={2} marginBottom={4}>
                         {table.getRowModel().rows.map(currCase => (
-                            <Card key={currCase.original.caseId}>
-                                <CardHeader>
-                                    <Flex gap={2} justifyContent="space-between" alignItems="center">
-                                        <Text size="md" fontWeight={600}>
-                                            Case #{currCase.original.caseId}
-                                        </Text>
+                            <ListItem key={currCase.original.caseId}>
+                                <Card>
+                                    <CardHeader>
+                                        <Flex gap={2} justifyContent="space-between" alignItems="center">
+                                            <Text size="md" fontWeight={600}>
+                                                Case #{currCase.original.caseId}
+                                            </Text>
 
-                                        <RouteTo
-                                            to={`/guilds/${currCase.original.guildId}/cases/${currCase.original.caseId}`}
-                                        >
-                                            <IconButton aria-label="Open Case" size="sm" icon={<MdOpenInNew />} />
-                                        </RouteTo>
-                                    </Flex>
-                                </CardHeader>
-                                <CardBody>
-                                    <Flex gap={3} direction={'column'}>
-                                        <Flex>
-                                            <Text size="md" fontWeight={600} flex="25%" color="gray" marginBlock="auto">
-                                                Moderator
-                                            </Text>
-                                            <Box flex="75%">
-                                                <AvatarWithName
-                                                    guildId={currCase.original.guildId}
-                                                    userId={currCase.original.caseCreator}
-                                                />
-                                            </Box>
+                                            <RouteTo
+                                                to={`/guilds/${currCase.original.guildId}/cases/${currCase.original.caseId}`}
+                                            >
+                                                <IconButton aria-label="Open Case" size="sm" icon={<MdOpenInNew />} />
+                                            </RouteTo>
                                         </Flex>
-                                        <Flex>
-                                            <Text size="md" fontWeight={600} flex="25%" color="gray" marginBlock="auto">
-                                                Offending User
-                                            </Text>
-                                            <Box flex="75%">
-                                                <AvatarWithName
-                                                    guildId={currCase.original.guildId}
-                                                    userId={currCase.original.moderatedUser}
-                                                />
-                                            </Box>
+                                    </CardHeader>
+                                    <CardBody>
+                                        <Flex gap={3} direction={'column'}>
+                                            <Flex>
+                                                <Text
+                                                    size="md"
+                                                    fontWeight={600}
+                                                    flex="25%"
+                                                    color="gray"
+                                                    marginBlock="auto"
+                                                >
+                                                    Moderator
+                                                </Text>
+                                                <Box flex="75%">
+                                                    <AvatarWithName
+                                                        guildId={currCase.original.guildId}
+                                                        userId={currCase.original.caseCreator}
+                                                    />
+                                                </Box>
+                                            </Flex>
+                                            <Flex>
+                                                <Text
+                                                    size="md"
+                                                    fontWeight={600}
+                                                    flex="25%"
+                                                    color="gray"
+                                                    marginBlock="auto"
+                                                >
+                                                    Offending User
+                                                </Text>
+                                                <Box flex="75%">
+                                                    <AvatarWithName
+                                                        guildId={currCase.original.guildId}
+                                                        userId={currCase.original.moderatedUser}
+                                                    />
+                                                </Box>
+                                            </Flex>
                                         </Flex>
-                                    </Flex>
-                                </CardBody>
-                            </Card>
+                                    </CardBody>
+                                </Card>
+                            </ListItem>
                         ))}
-                    </Flex>
+                    </List>
+                    <TableNavigation table={table} />
                 </>
             );
         }
@@ -258,18 +259,14 @@ export default function Cases() {
                                                 {
                                                     [`${header.column.getCanSort()}`]: 'pointer',
                                                     [`${!header.column.getCanSort()}`]: 'not-allowed'
-                                                }['true']
+                                                }.true
                                             }
                                             onClick={header.column.getToggleSortingHandler()}
                                         >
                                             <Flex gap={2}>
                                                 <Box as="span" marginBlock={'auto'}>
-                                                    {header.isPlaceholder
-                                                        ? null
-                                                        : flexRender(
-                                                              header.column.columnDef.header,
-                                                              header.getContext()
-                                                          )}
+                                                    {!header.isPlaceholder &&
+                                                        flexRender(header.column.columnDef.header, header.getContext())}
                                                 </Box>
                                                 {{
                                                     asc: <MdArrowUpward />,

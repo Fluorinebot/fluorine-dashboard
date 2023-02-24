@@ -1,30 +1,27 @@
-import { ErrorType } from '#/lib/types';
+import type { ErrorType } from '#/lib/types';
 import { Box, Center, Flex, Heading, Icon, Image, List, Spinner, Text } from '@chakra-ui/react';
 import { MdArrowBack, MdError, MdHistory, MdSettings } from 'react-icons/md';
 import { useLocation } from 'react-router-dom';
-import Tab, { TabObject } from '#/components/sidebars/Tab';
+import Tab, { type TabObject } from '#/components/sidebars/Tab';
 
-const getIcon = (id: string, icon?: string) =>
-    icon
+const getIcon = (id: string, icon?: string) => {
+    const ret = icon
         ? `https://cdn.discordapp.com/icons/${id}/${icon}.${icon.endsWith('_a') ? 'gif' : 'webp'}?size=1024`
         : `https://cdn.discordapp.com/embed/avatars/${BigInt(id) % BigInt(5)}.png?size=48`;
 
-export default function TabsList({
-    loading,
-    data,
-    error,
-    id,
-    isGuildBackURI
-}: {
+    return ret;
+};
+
+const GuildWithIDSidebar: React.FC<{
     loading: boolean;
     error: ErrorType<any>;
     data: any;
     code: number;
     isGuildBackURI?: boolean;
     id?: string;
-}) {
+}> = ({ loading, data, error, id, isGuildBackURI }) => {
     const location = useLocation();
-    const currLocation = location.pathname.split('/')[3];
+    const [, , , currLocation] = location.pathname.split('/');
 
     const tabs: TabObject[] = [
         {
@@ -91,4 +88,6 @@ export default function TabsList({
     }
 
     return <></>;
-}
+};
+
+export default GuildWithIDSidebar;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ErrorType } from './types';
+import type { ErrorType } from './types';
 
-const useAPI = <SuccessType, K = {}>(url: string, options: RequestInit = {}) => {
+const useAPI = <SuccessType, K = Record<any, any>>(url: string, options: RequestInit = {}) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<ErrorType<K>>();
     const [data, setData] = useState<SuccessType | undefined>();
@@ -20,11 +20,12 @@ const useAPI = <SuccessType, K = {}>(url: string, options: RequestInit = {}) => 
                 if (res.ok) {
                     setData(body);
                 } else {
-                    console.log(body);
+                    console.error(body);
                     setError(body);
                 }
             } catch (err) {
                 if (err instanceof Error) {
+                    console.error(error);
                     setError({ error: err.message });
                     setCode(1000);
                 }
@@ -33,7 +34,9 @@ const useAPI = <SuccessType, K = {}>(url: string, options: RequestInit = {}) => 
             setLoading(false);
         };
 
-        func();
+        if (!ignore) {
+            func();
+        }
 
         return () => {
             ignore = true;

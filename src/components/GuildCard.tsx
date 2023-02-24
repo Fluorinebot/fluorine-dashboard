@@ -1,14 +1,17 @@
 import { CLIENT_ID } from '#/lib/constants';
-import { Card, Center, Heading, Avatar, LinkBox, useColorModeValue } from '@chakra-ui/react';
-import { APIGuild } from 'discord-api-types/v10';
+import type { FluorineGuild } from '#/lib/types';
+import { Card, Center, Heading, Image, LinkBox, useColorModeValue } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 
-const getIcon = (x: APIGuild & { fluorine: boolean }) =>
-    x.icon
+const getIcon = (x: FluorineGuild) => {
+    const ret = x.icon
         ? `https://cdn.discordapp.com/icons/${x.id}/${x.icon}.${x.icon.endsWith('_a') ? 'gif' : 'webp'}?size=1024`
-        : `no-icon-rip-bozo`;
+        : `https://cdn.discordapp.com/embed/avatars/${BigInt(x.id) % BigInt(5)}.png`;
 
-const GuildCard: React.FC<{ guild: APIGuild & { fluorine: boolean }; link: string }> = ({ guild, link }) => {
+    return ret;
+};
+
+const GuildCard: React.FC<{ guild: FluorineGuild; link: string }> = ({ guild, link }) => {
     const val = useColorModeValue('blackAlpha.100', 'whiteAlpha.400');
 
     const jsx = (
@@ -22,7 +25,7 @@ const GuildCard: React.FC<{ guild: APIGuild & { fluorine: boolean }; link: strin
             }}
         >
             <Center>
-                <Avatar objectFit="cover" w={'24'} h={'24'} src={getIcon(guild)} name={guild.name} rounded={'full'} />
+                <Image objectFit="cover" w={'24'} h={'24'} src={getIcon(guild)} alt="" rounded={'full'} />
             </Center>
             <Heading as="h5" size="md" marginBlock={'auto'} textAlign="center">
                 {guild.name}

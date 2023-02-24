@@ -1,8 +1,8 @@
-import Tab, { TabObject } from '#/components/sidebars/Tab';
+import Tab, { type TabObject } from '#/components/sidebars/Tab';
 import { List } from '@chakra-ui/react';
 import { MdLeaderboard, MdPeople, MdPerson } from 'react-icons/md';
 
-export default function HomeMenu() {
+const MainLayoutSidebar: React.FC = () => {
     const tabs: TabObject[] = [
         { tabName: 'User Settings', TabIcon: MdPerson, tabURI: '/', end: true },
         { tabName: 'Server Settings', TabIcon: MdPeople, tabURI: '/guilds' },
@@ -20,4 +20,6 @@ export default function HomeMenu() {
             ))}
         </List>
     );
-}
+};
+
+export default MainLayoutSidebar;

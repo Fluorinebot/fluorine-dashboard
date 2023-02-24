@@ -1,6 +1,7 @@
 import { BASE_URI } from '#/lib/constants';
 import useAPI from '#/lib/useAPI';
 import {
+    Avatar,
     Box,
     Drawer,
     DrawerBody,
@@ -12,41 +13,43 @@ import {
     Flex,
     Heading,
     IconButton,
-    Avatar,
+    Image,
     Link,
     Text,
     useColorMode,
     useColorModeValue,
-    UseDisclosureReturn,
+    useDisclosure,
     useToast
 } from '@chakra-ui/react';
-import { APIUser } from 'discord-api-types/v10';
-import { MdDarkMode, MdLightMode, MdLogout } from 'react-icons/md';
+import type { APIUser } from 'discord-api-types/v10';
+import { MdArrowUpward, MdDarkMode, MdLightMode, MdLogout, MdMenu } from 'react-icons/md';
 import { useMediaQuery } from 'react-responsive';
 import { Link as RouteTo, useNavigate } from 'react-router-dom';
 
-const getIcon = (id: string, icon: string | null, discrim: string) =>
-    icon
+const getIcon = (id: string, icon: string | null, discrim: string) => {
+    const ret = icon
         ? `https://cdn.discordapp.com/avatars/${id}/${icon}.${icon.endsWith('_a') ? 'gif' : 'webp'}?size=512`
         : `https://cdn.discordapp.com/embed/avatars/${BigInt(discrim) % BigInt(5)}.png?size=1024`;
 
+    return ret;
+};
+
 const Sidebar: React.FC<{
     children: React.ReactNode;
-    disclosureProps: UseDisclosureReturn;
-}> = ({ children, disclosureProps }) => {
+}> = ({ children }) => {
     const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
     const { colorMode, toggleColorMode } = useColorMode();
+    const { isOpen, onClose, onToggle } = useDisclosure({ id: 'App::MobileSidebar' });
+    const { loading, data, error } = useAPI<APIUser>(`${BASE_URI}/user`, { method: 'GET' });
     const toast = useToast();
     const navigate = useNavigate();
 
-    const { loading, data, error } = useAPI<APIUser>(`${BASE_URI}/user`, { method: 'GET' });
+    const sidebarBackground = useColorModeValue('gray.50', 'gray.900');
+    const navbarShadow = useColorModeValue('md', 'lg');
 
-    if (error || loading || !data) {
-    }
-
-    let name: string = '';
+    let name = '';
     let originalName = 'Fluorine Dashboard';
-    let iconURL: string = '';
+    let iconURL = '';
 
     if (error || loading) {
         if (loading) {
@@ -94,51 +97,76 @@ const Sidebar: React.FC<{
 
     if (isMobile) {
         return (
-            <Drawer isOpen={disclosureProps.isOpen} placement="left" size="80%" onClose={disclosureProps.onClose}>
-                <DrawerOverlay />
-                <DrawerContent>
-                    <DrawerCloseButton />
-                    <DrawerHeader>Fluorine</DrawerHeader>
+            <Flex background={sidebarBackground} padding="2" justify={'space-between'} shadow={navbarShadow}>
+                <Link as={RouteTo} to="/">
+                    <Flex gap={4} alignItems="center">
+                        <Image src="/fluorine.svg" width="10" height="10" rounded="full" />
+                        <Text fontSize={'2xl'} as="h1" fontWeight={900}>
+                            Fluorine
+                        </Text>
+                    </Flex>
+                </Link>
 
-                    <DrawerBody onClickCapture={disclosureProps.onClose}>{children}</DrawerBody>
+                <Flex gap={2}>
+                    <IconButton
+                        onClick={onToggle}
+                        aria-label={isOpen ? 'Close' : 'Open Menu'}
+                        icon={isOpen ? <MdArrowUpward size={'24'} /> : <MdMenu size={'24'} />}
+                        variant="ghost"
+                    />
+                </Flex>
 
-                    <DrawerFooter>
-                        <Flex justifyContent="space-between" alignItems="center" flex="1">
-                            <Flex gap="2" alignItems="center">
-                                <Avatar w={'12'} h={'12'} src={iconURL} name={originalName} rounded={'full'} />
-                                <Box>
-                                    <Text color="gray" size="xs">
-                                        Logged in as
+                <Drawer isOpen={isOpen} placement="left" size="80%" onClose={onClose}>
+                    <DrawerOverlay />
+                    <DrawerContent>
+                        <DrawerCloseButton />
+                        <DrawerHeader>
+                            <Link as={RouteTo} to="/">
+                                <Flex gap={4} alignItems="center">
+                                    <Image src="/fluorine.svg" width="10" height="10" rounded="full" />
+                                    <Text fontSize={'2xl'} as="h1" fontWeight={900}>
+                                        Fluorine
                                     </Text>
-                                    <Heading as="h5" size="sm" wordBreak="break-all">
-                                        {name}
-                                    </Heading>
-                                </Box>
-                            </Flex>
+                                </Flex>
+                            </Link>
+                        </DrawerHeader>
 
-                            <Flex justifyContent="flex-end" gap={2} marginBlock="auto">
-                                {buttons}
+                        <DrawerBody onClickCapture={onClose}>{children}</DrawerBody>
+
+                        <DrawerFooter>
+                            <Flex justifyContent="space-between" alignItems="center" flex="1">
+                                <Flex gap="2" alignItems="center">
+                                    <Avatar w={'12'} h={'12'} src={iconURL} name={originalName} rounded={'full'} />
+                                    <Box>
+                                        <Text color="gray" size="xs">
+                                            Logged in as
+                                        </Text>
+                                        <Heading as="h5" size="sm" wordBreak="break-all">
+                                            {name}
+                                        </Heading>
+                                    </Box>
+                                </Flex>
+
+                                <Flex justifyContent="flex-end" gap={2} marginBlock="auto">
+                                    {buttons}
+                                </Flex>
                             </Flex>
-                        </Flex>
-                    </DrawerFooter>
-                </DrawerContent>
-            </Drawer>
+                        </DrawerFooter>
+                    </DrawerContent>
+                </Drawer>
+            </Flex>
         );
     }
 
     return (
-        <Flex
-            direction="column"
-            background={useColorModeValue('gray.50', 'gray.900')}
-            padding={4}
-            as={'aside'}
-            height={'100%'}
-            gap={3}
-        >
-            <Link as={RouteTo} to="/" colorScheme={'brand'}>
-                <Heading fontSize={'2xl'} as="h1" fontWeight={900}>
-                    Fluorine
-                </Heading>
+        <Flex direction="column" background={sidebarBackground} padding={4} as={'aside'} height={'100%'} gap={3}>
+            <Link as={RouteTo} to="/">
+                <Flex gap={4} alignItems="center">
+                    <Image src="/fluorine.svg" width="10" height="10" rounded="full" />
+                    <Text fontSize={'2xl'} as="h1" fontWeight={900}>
+                        Fluorine
+                    </Text>
+                </Flex>
             </Link>
 
             <Box flex={1} overflowY={'scroll'} maxHeight="100vh">

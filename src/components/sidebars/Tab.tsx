@@ -1,5 +1,5 @@
 import { Button, Heading, ListItem, useColorModeValue } from '@chakra-ui/react';
-import { IconType } from 'react-icons';
+import type { IconType } from 'react-icons';
 import { NavLink } from 'react-router-dom';
 
 export interface TabObject {
@@ -10,13 +10,15 @@ export interface TabObject {
 }
 
 const Tab: React.FC<TabObject> = ({ TabIcon, tabURI, tabName, end }) => {
+    const val = useColorModeValue('gray', 'white');
+
     return (
         <ListItem>
             <NavLink to={tabURI} end={end}>
                 {({ isActive }) => (
                     <Button
                         gap={2}
-                        colorScheme={isActive ? 'brand' : useColorModeValue('gray', 'white')}
+                        colorScheme={isActive ? 'brand' : val}
                         iconSpacing={2}
                         leftIcon={<TabIcon size="36" />}
                         variant={isActive ? 'solid' : 'ghost'}

@@ -1,3 +1,5 @@
+import type { APIGuild } from 'discord-api-types/v10';
+
 export interface Profile {
     userId?: string | bigint;
     description?: string;
@@ -24,3 +26,5 @@ export interface User {
     avatar?: string;
     roles: any;
 }
+
+export type FluorineGuild = APIGuild & { fluorine: boolean };

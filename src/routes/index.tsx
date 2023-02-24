@@ -68,7 +68,7 @@ const validate = async ({ description, location, birthday, pronouns, website }: 
     return errors;
 };
 
-const Home: React.FC<{}> = ({}) => {
+const Home: React.FC = () => {
     const toast = useToast();
     const { data, error, loading, code } = useAPI<Profile, { error: string; userId: string | bigint }>(
         `${BASE_URI}/profile`
@@ -101,9 +101,7 @@ const Home: React.FC<{}> = ({}) => {
                 const patch = await fetch(`${BASE_URI}/profile`, {
                     credentials: 'include',
                     method: 'PATCH',
-                    body: JSON.stringify(values, (key, value) => {
-                        return value === '' ? null : value;
-                    })
+                    body: JSON.stringify(values, (key, value) => (value === '' ? null : value))
                 });
 
                 if (patch.ok) {
@@ -125,7 +123,7 @@ const Home: React.FC<{}> = ({}) => {
                 actions.setSubmitting(false);
             }, 1000);
         },
-        validate: validate,
+        validate,
         enableReinitialize: true
     });
 
@@ -140,19 +138,18 @@ const Home: React.FC<{}> = ({}) => {
     if (error && code !== 404) {
         if (code === 401) {
             return <AuthorizeError />;
-        } else {
-            return (
-                <Center height={'100%'} width={'100%'}>
-                    <Flex gap={2}>
-                        <Icon as={MdError} h={10} w={10}></Icon>
-                        <Box>
-                            <Heading size="md">Something went wrong.</Heading>
-                            <Text size="md">Please try again.</Text>
-                        </Box>
-                    </Flex>
-                </Center>
-            );
         }
+        return (
+            <Center height={'100%'} width={'100%'}>
+                <Flex gap={2}>
+                    <Icon as={MdError} h={10} w={10}></Icon>
+                    <Box>
+                        <Heading size="md">Something went wrong.</Heading>
+                        <Text size="md">Please try again.</Text>
+                    </Box>
+                </Flex>
+            </Center>
+        );
     }
 
     if (data || (error && code === 404)) {
