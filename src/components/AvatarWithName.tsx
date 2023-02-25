@@ -1,7 +1,7 @@
 import { BASE_URI } from '#/lib/constants';
-import type { User } from '#/lib/types';
-import useAPI from '#/lib/useAPI';
+import type { User, WithPayload } from '#/lib/types';
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import useSWR from 'swr';
 
 const getIcon = (id: string, tag: string, icon?: string) => {
     const parsed = tag.split('#');
@@ -14,9 +14,9 @@ const getIcon = (id: string, tag: string, icon?: string) => {
 };
 
 const AvatarWithName: React.FC<{ guildId: string; userId: string }> = ({ guildId, userId }) => {
-    const { data, error, loading } = useAPI<User>(`${BASE_URI}/guilds/${guildId}/users/${userId}`);
+    const { data, error, isLoading } = useSWR<WithPayload<User>>([`${BASE_URI}/guilds/${guildId}/users/${userId}`]);
 
-    if (error || loading) {
+    if (error || isLoading) {
         return (
             <Flex gap={2}>
                 <Image
@@ -26,7 +26,7 @@ const AvatarWithName: React.FC<{ guildId: string; userId: string }> = ({ guildId
                     rounded="full"
                 />
                 <Text size="md" fontWeight={600} colorScheme={'gray'}>
-                    {loading && 'Loading User'}
+                    {isLoading && 'Loading User'}
                     {error && 'Unknown User'}#0000
                 </Text>
             </Flex>
@@ -34,27 +34,29 @@ const AvatarWithName: React.FC<{ guildId: string; userId: string }> = ({ guildId
     }
 
     if (data) {
+        const { payload } = data;
+
         return (
             <Flex gap={2} alignItems="center">
                 <Image
-                    src={getIcon(userId, data.tag, data.avatar)}
+                    src={getIcon(userId, payload.tag, payload.avatar)}
                     h={['36px', '36px', '48px']}
                     w={['36px', '36px', '48px']}
                     rounded="full"
                 />
                 <Box>
-                    {data.nickname ? (
+                    {payload.nickname ? (
                         <Box>
                             <Text fontWeight={600} size="lg" wordBreak={'break-all'}>
-                                {data.nickname}
+                                {payload.nickname}
                             </Text>{' '}
                             <Text color={'gray'} size="md">
-                                {data.tag}
+                                {payload.tag}
                             </Text>
                         </Box>
                     ) : (
                         <Text size="lg" fontWeight={600} wordBreak="break-all">
-                            {data.tag}
+                            {payload.tag}
                         </Text>
                     )}
                 </Box>

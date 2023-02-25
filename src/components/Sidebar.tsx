@@ -1,8 +1,15 @@
 import { BASE_URI } from '#/lib/constants';
-import useAPI from '#/lib/useAPI';
+import type { WithPayload } from '#/lib/types';
 import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
     Avatar,
     Box,
+    Button,
     Drawer,
     DrawerBody,
     DrawerCloseButton,
@@ -18,13 +25,14 @@ import {
     Text,
     useColorMode,
     useColorModeValue,
-    useDisclosure,
-    useToast
+    useDisclosure
 } from '@chakra-ui/react';
 import type { APIUser } from 'discord-api-types/v10';
+import { useRef } from 'react';
 import { MdArrowUpward, MdDarkMode, MdLightMode, MdLogout, MdMenu } from 'react-icons/md';
 import { useMediaQuery } from 'react-responsive';
 import { Link as RouteTo, useNavigate } from 'react-router-dom';
+import useSWR from 'swr';
 
 const getIcon = (id: string, icon: string | null, discrim: string) => {
     const ret = icon
@@ -37,22 +45,33 @@ const getIcon = (id: string, icon: string | null, discrim: string) => {
 const Sidebar: React.FC<{
     children: React.ReactNode;
 }> = ({ children }) => {
+    const { isOpen, onClose, onToggle, getButtonProps, getDisclosureProps } = useDisclosure({
+        id: 'App::MobileSidebar'
+    });
+
+    const {
+        isOpen: isLogOutOpen,
+        onClose: onLogOutClose,
+        onToggle: onLogOutToggle,
+        getDisclosureProps: getLogOutDisclosure,
+        getButtonProps: getLogOutButton
+    } = useDisclosure({ id: 'App::LogOut' });
+    const navigate = useNavigate();
+    const { isLoading, data, error, mutate } = useSWR<WithPayload<APIUser>>([`${BASE_URI}/user`], {
+        refreshInterval: 0
+    });
     const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
     const { colorMode, toggleColorMode } = useColorMode();
-    const { isOpen, onClose, onToggle } = useDisclosure({ id: 'App::MobileSidebar' });
-    const { loading, data, error } = useAPI<APIUser>(`${BASE_URI}/user`, { method: 'GET' });
-    const toast = useToast();
-    const navigate = useNavigate();
-
     const sidebarBackground = useColorModeValue('gray.50', 'gray.900');
     const navbarShadow = useColorModeValue('md', 'lg');
+    const cancelRef = useRef<any>();
 
     let name = '';
-    let originalName = 'Fluorine Dashboard';
+    let originalName = '';
     let iconURL = '';
 
-    if (error || loading) {
-        if (loading) {
+    if (error || isLoading) {
+        if (isLoading) {
             name = 'Loading User#0000';
         }
 
@@ -65,23 +84,15 @@ const Sidebar: React.FC<{
     }
 
     if (data) {
-        iconURL = getIcon(data.id, data.avatar, data.discriminator);
-        name = `${data.username}#${data.discriminator}`;
-        originalName = data.username;
+        iconURL = getIcon(data.payload.id, data.payload.avatar, data.payload.discriminator);
+        name = `${data.payload.username}#${data.payload.discriminator}`;
+        originalName = data.payload.username;
     }
 
-    const buttons = (
+    const userSideButtons = (
         <>
             <IconButton
-                onClick={() =>
-                    toast({
-                        title: 'You may not log out at this time.',
-                        status: 'error',
-                        duration: 9000,
-                        position: 'top',
-                        isClosable: true
-                    })
-                }
+                onClick={onLogOutToggle}
                 aria-label={'Log out'}
                 icon={<MdLogout size={'24'} />}
                 variant="ghost"
@@ -93,6 +104,40 @@ const Sidebar: React.FC<{
                 variant="ghost"
             />
         </>
+    );
+
+    const logOut = () => {
+        onLogOutClose();
+        mutate();
+    };
+
+    const logOutModal = (
+        <AlertDialog
+            isOpen={isLogOutOpen}
+            leastDestructiveRef={cancelRef}
+            onClose={onClose}
+            isCentered
+            {...getLogOutDisclosure()}
+        >
+            <AlertDialogOverlay>
+                <AlertDialogContent>
+                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                        Log Out?
+                    </AlertDialogHeader>
+
+                    <AlertDialogBody>Are you sure you want to log out?</AlertDialogBody>
+
+                    <AlertDialogFooter>
+                        <Button ref={cancelRef} onClick={onLogOutClose}>
+                            Cancel
+                        </Button>
+                        <Button colorScheme="red" onClick={logOut} ml={3}>
+                            Log Out
+                        </Button>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialogOverlay>
+        </AlertDialog>
     );
 
     if (isMobile) {
@@ -109,14 +154,14 @@ const Sidebar: React.FC<{
 
                 <Flex gap={2}>
                     <IconButton
-                        onClick={onToggle}
                         aria-label={isOpen ? 'Close' : 'Open Menu'}
                         icon={isOpen ? <MdArrowUpward size={'24'} /> : <MdMenu size={'24'} />}
                         variant="ghost"
+                        {...getButtonProps()}
                     />
                 </Flex>
 
-                <Drawer isOpen={isOpen} placement="left" size="80%" onClose={onClose}>
+                <Drawer isOpen={isOpen} placement="left" size="80%" {...getDisclosureProps()} onClose={onClose}>
                     <DrawerOverlay />
                     <DrawerContent>
                         <DrawerCloseButton />
@@ -148,12 +193,14 @@ const Sidebar: React.FC<{
                                 </Flex>
 
                                 <Flex justifyContent="flex-end" gap={2} marginBlock="auto">
-                                    {buttons}
+                                    {userSideButtons}
                                 </Flex>
                             </Flex>
                         </DrawerFooter>
                     </DrawerContent>
                 </Drawer>
+
+                {logOutModal}
             </Flex>
         );
     }
@@ -187,9 +234,11 @@ const Sidebar: React.FC<{
                 </Flex>
 
                 <Flex justifyContent="flex-end" gap={2}>
-                    {buttons}
+                    {userSideButtons}
                 </Flex>
             </Flex>
+
+            {logOutModal}
         </Flex>
     );
 };

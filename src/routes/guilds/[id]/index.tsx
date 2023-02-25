@@ -2,10 +2,11 @@ import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import Sidebar from '#/components/Sidebar';
 import TabsList from '#/components/sidebars/GuildWithIDSidebar';
 import { BASE_URI } from '#/lib/constants';
-import useAPI from '#/lib/useAPI';
+import type { WithPayload } from '#/lib/types';
 import { Box, Center, Flex, Spinner } from '@chakra-ui/react';
 import { useMediaQuery } from 'react-responsive';
 import { Outlet, useParams } from 'react-router-dom';
+import useSWR from 'swr';
 
 const getIcon = (id: string, icon?: string) => {
     const ret = icon
@@ -17,12 +18,12 @@ const getIcon = (id: string, icon?: string) => {
 
 const Guild: React.FC = () => {
     const params = useParams();
-    const { data, error, loading, code } = useAPI<any>(`${BASE_URI}/guilds/${params.id}`);
+    const { data, error, isLoading } = useSWR<WithPayload<any>>([`${BASE_URI}/guilds/${params.id}`]);
 
     const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
     let jsx;
 
-    if (loading) {
+    if (isLoading) {
         jsx = (
             <Center width="100%" height="100vh">
                 <Spinner />
@@ -31,28 +32,40 @@ const Guild: React.FC = () => {
     }
 
     if (error) {
-        if (code === 401) {
-            jsx = <AuthorizeError />;
-        } else if (code === 403) {
-            jsx = (
-                <ErrorMessage
-                    heading="Not Allowed!"
-                    message="You are not allowed to edit that server."
-                    button="Go back"
-                    link="/guilds"
-                />
-            );
-        } else if (code === 404) {
-            jsx = (
-                <ErrorMessage
-                    heading="Not Found!"
-                    message="That server does not exist, or does not have Fluorine."
-                    button="Go back"
-                    link="/guilds"
-                />
-            );
-        } else {
-            jsx = <ErrorMessage heading="Something went wrong!" message="Please try again." />;
+        switch (error.code) {
+            case 401: {
+                jsx = <AuthorizeError />;
+                break;
+            }
+
+            case 403: {
+                jsx = (
+                    <ErrorMessage
+                        heading="Not Allowed!"
+                        message="You are not allowed to edit that server."
+                        button="Go back"
+                        link="/guilds"
+                    />
+                );
+                break;
+            }
+
+            case 404: {
+                jsx = (
+                    <ErrorMessage
+                        heading="Not Found!"
+                        message="That server does not exist, or does not have Fluorine."
+                        button="Go back"
+                        link="/guilds"
+                    />
+                );
+                break;
+            }
+
+            default: {
+                jsx = <ErrorMessage heading="Something went wrong!" message="Please try again." />;
+                break;
+            }
         }
     }
 
@@ -70,10 +83,9 @@ const Guild: React.FC = () => {
                 <Box>
                     <Sidebar>
                         <TabsList
-                            data={data}
-                            error={error}
-                            loading={loading}
-                            code={code}
+                            data={data?.payload}
+                            error={error?.payload}
+                            loading={isLoading}
                             id={params.id}
                             isGuildBackURI={Boolean(params.item)}
                         />
@@ -88,10 +100,9 @@ const Guild: React.FC = () => {
                     <Box flex="20%" height="100vh">
                         <Sidebar>
                             <TabsList
-                                data={data}
-                                error={error}
-                                loading={loading}
-                                code={code}
+                                data={data?.payload}
+                                error={error?.payload}
+                                loading={isLoading}
                                 id={params.id}
                                 isGuildBackURI={Boolean(params.item)}
                             />

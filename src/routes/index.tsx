@@ -1,7 +1,6 @@
 import { AuthorizeError } from '#/components/ErrorBoundary';
 import { BASE_URI } from '#/lib/constants';
-import type { Profile } from '#/lib/types';
-import useAPI from '#/lib/useAPI';
+import type { Profile, WithPayload } from '#/lib/types';
 import {
     Box,
     Button,
@@ -20,8 +19,10 @@ import {
     Textarea,
     useToast
 } from '@chakra-ui/react';
-import { useFormik } from 'formik';
+import { Form, Formik } from 'formik';
 import { MdError } from 'react-icons/md';
+import useSWR from 'swr';
+import useSWRMutation from 'swr/mutation';
 
 const validate = async ({ description, location, birthday, pronouns, website }: Profile) => {
     const errors: Profile = {};
@@ -70,64 +71,24 @@ const validate = async ({ description, location, birthday, pronouns, website }: 
 
 const Home: React.FC = () => {
     const toast = useToast();
-    const { data, error, loading, code } = useAPI<Profile, { error: string; userId: string | bigint }>(
+    const { data, isLoading, error } = useSWR<WithPayload<Profile>, WithPayload<{ error: string; userId: string }>>([
         `${BASE_URI}/profile`
-    );
+    ]);
 
-    const formik = useFormik({
-        initialValues: {
-            userId: data && 'userId' in data ? data.userId ?? '' : '',
-            location: data && 'location' in data ? data.location ?? '' : '',
-            birthday: data && 'birthday' in data ? data.birthday ?? '' : '',
-            pronouns: data && 'pronouns' in data ? data.pronouns ?? '' : '',
-            website: data && 'website' in data ? data.website ?? '' : '',
-            description: data && 'description' in data ? data.description ?? '' : ''
-        },
-        onSubmit: (values, actions) => {
-            if (Object.values(validate(values)).length > 0) {
-                toast({
-                    title: 'Form is invalid!',
-                    description: 'Check your input and try again.',
-                    status: 'error',
-                    duration: 9000,
-                    isClosable: true
-                });
+    const { trigger } = useSWRMutation([`${BASE_URI}/profile`], async ([url], { arg }) => {
+        const res = await fetch(url, {
+            credentials: 'include',
+            method: 'PATCH',
+            body: arg
+        });
 
-                actions.setSubmitting(false);
-                return;
-            }
-
-            setTimeout(async () => {
-                const patch = await fetch(`${BASE_URI}/profile`, {
-                    credentials: 'include',
-                    method: 'PATCH',
-                    body: JSON.stringify(values, (key, value) => (value === '' ? null : value))
-                });
-
-                if (patch.ok) {
-                    toast({
-                        title: 'Saved changes.',
-                        status: 'success',
-                        duration: 9000,
-                        isClosable: true
-                    });
-                } else {
-                    toast({
-                        title: 'Something went wrong!',
-                        status: 'error',
-                        duration: 9000,
-                        isClosable: true
-                    });
-                }
-
-                actions.setSubmitting(false);
-            }, 1000);
-        },
-        validate,
-        enableReinitialize: true
+        return {
+            code: res.status,
+            payload: res.json()
+        };
     });
 
-    if (loading) {
+    if (isLoading) {
         return (
             <Center width="100%" height="100vh">
                 <Spinner />
@@ -135,8 +96,8 @@ const Home: React.FC = () => {
         );
     }
 
-    if (error && code !== 404) {
-        if (code === 401) {
+    if (error && error.code !== 404) {
+        if (error.code === 401) {
             return <AuthorizeError />;
         }
         return (
@@ -152,7 +113,7 @@ const Home: React.FC = () => {
         );
     }
 
-    if (data || (error && code === 404)) {
+    if (data || (error && error.code === 404)) {
         return (
             <>
                 <Flex direction={'column'} gap={2}>
@@ -160,96 +121,134 @@ const Home: React.FC = () => {
                         Your profile
                     </Heading>
                     <Text size="md" fontWeight={400}>
-                        Change your profile here. {code === 404 && 'You currently do not have a profile!'}
+                        Change your profile here. {error?.code === 404 && 'You currently do not have a profile!'}
                     </Text>
                 </Flex>
 
                 <Divider marginY={4} />
 
-                <Box>
-                    <form onSubmit={formik.handleSubmit}>
-                        <Flex direction={'column'} gap={4}>
-                            <FormControl isInvalid={Boolean(formik.touched.description && formik.errors.description)}>
-                                <FormLabel>Description</FormLabel>
+                <Formik
+                    initialValues={{
+                        userId: data && 'userId' in data.payload ? data.payload.userId ?? '' : '',
+                        location: data && 'location' in data.payload ? data.payload.location ?? '' : '',
+                        birthday: data && 'birthday' in data.payload ? data.payload.birthday ?? '' : '',
+                        pronouns: data && 'pronouns' in data.payload ? data.payload.pronouns ?? '' : '',
+                        website: data && 'website' in data.payload ? data.payload.website ?? '' : '',
+                        description: data && 'description' in data.payload ? data.payload.description ?? '' : ''
+                    }}
+                    onSubmit={(values, actions) => {
+                        setTimeout(async () => {
+                            const patch = await trigger(
+                                JSON.stringify(values, (key, value) => (value === '' ? null : value))
+                            );
 
-                                <Textarea
-                                    id="description"
-                                    name="description"
-                                    onChange={formik.handleChange}
-                                    value={formik.values.description}
-                                />
+                            if (patch && patch.code >= 200 && patch.code <= 299) {
+                                toast({
+                                    title: 'Saved changes.',
+                                    status: 'success',
+                                    duration: 9000,
+                                    isClosable: true
+                                });
+                            } else {
+                                toast({
+                                    title: 'Something went wrong!',
+                                    status: 'error',
+                                    duration: 9000,
+                                    isClosable: true
+                                });
+                            }
 
-                                <FormErrorMessage>{formik.errors.description}</FormErrorMessage>
-                            </FormControl>
+                            actions.setSubmitting(false);
+                        }, 250);
+                    }}
+                    validate={validate}
+                    enableReinitialize
+                >
+                    {props => (
+                        <Form>
+                            <Flex direction={'column'} gap={4}>
+                                <FormControl isInvalid={Boolean(props.touched.description && props.errors.description)}>
+                                    <FormLabel>Description</FormLabel>
 
-                            <FormControl isInvalid={Boolean(formik.touched.pronouns && formik.errors.pronouns)}>
-                                <FormLabel>Pronouns</FormLabel>
+                                    <Textarea
+                                        id="description"
+                                        name="description"
+                                        onChange={props.handleChange}
+                                        value={props.values.description}
+                                    />
 
-                                <Input
-                                    type="text"
-                                    id="pronouns"
-                                    name="pronouns"
-                                    onChange={formik.handleChange}
-                                    value={formik.values.pronouns}
-                                />
+                                    <FormErrorMessage>{props.errors.description}</FormErrorMessage>
+                                </FormControl>
 
-                                <FormErrorMessage>{formik.errors.pronouns}</FormErrorMessage>
-                            </FormControl>
+                                <FormControl isInvalid={Boolean(props.touched.pronouns && props.errors.pronouns)}>
+                                    <FormLabel>Pronouns</FormLabel>
 
-                            <FormControl isInvalid={Boolean(formik.touched.birthday && formik.errors.birthday)}>
-                                <FormLabel>Birthday</FormLabel>
+                                    <Input
+                                        type="text"
+                                        id="pronouns"
+                                        name="pronouns"
+                                        onChange={props.handleChange}
+                                        value={props.values.pronouns}
+                                    />
 
-                                <Input
-                                    type="text"
-                                    id="birthday"
-                                    name="birthday"
-                                    onChange={formik.handleChange}
-                                    value={formik.values.birthday}
-                                />
+                                    <FormErrorMessage>{props.errors.pronouns}</FormErrorMessage>
+                                </FormControl>
 
-                                <FormHelperText>Use DD/MM format, no leading zeros.</FormHelperText>
-                                <FormErrorMessage>{formik.errors.birthday}</FormErrorMessage>
-                            </FormControl>
+                                <FormControl isInvalid={Boolean(props.touched.birthday && props.errors.birthday)}>
+                                    <FormLabel>Birthday</FormLabel>
 
-                            <FormControl isInvalid={Boolean(formik.touched.website && formik.errors.website)}>
-                                <FormLabel>Website</FormLabel>
+                                    <Input
+                                        type="text"
+                                        id="birthday"
+                                        name="birthday"
+                                        onChange={props.handleChange}
+                                        value={props.values.birthday}
+                                    />
 
-                                <Input
-                                    type="text"
-                                    id="website"
-                                    name="website"
-                                    onChange={formik.handleChange}
-                                    value={formik.values.website}
-                                />
+                                    <FormHelperText>Use DD/MM format, no leading zeros.</FormHelperText>
+                                    <FormErrorMessage>{props.errors.birthday}</FormErrorMessage>
+                                </FormControl>
 
-                                <FormErrorMessage>{formik.errors.website}</FormErrorMessage>
-                            </FormControl>
+                                <FormControl isInvalid={Boolean(props.touched.website && props.errors.website)}>
+                                    <FormLabel>Website</FormLabel>
 
-                            <FormControl isInvalid={Boolean(formik.touched.location && formik.errors.location)}>
-                                <FormLabel>Location</FormLabel>
-                                <Input
-                                    type="text"
-                                    id="location"
-                                    name="location"
-                                    onChange={formik.handleChange}
-                                    value={formik.values.location}
-                                />
-                                <FormErrorMessage>{formik.errors.location}</FormErrorMessage>
-                            </FormControl>
+                                    <Input
+                                        type="text"
+                                        id="website"
+                                        name="website"
+                                        onChange={props.handleChange}
+                                        value={props.values.website}
+                                    />
 
-                            <Button
-                                type="submit"
-                                isLoading={formik.isSubmitting}
-                                loadingText="Updating Profile"
-                                disabled={formik.isSubmitting ? formik.isSubmitting : formik.dirty}
-                                colorScheme={'brand'}
-                                width={'fit-content'}
-                            >
-                                Update Profile
-                            </Button>
-                        </Flex>
-                    </form>
-                </Box>
+                                    <FormErrorMessage>{props.errors.website}</FormErrorMessage>
+                                </FormControl>
+
+                                <FormControl isInvalid={Boolean(props.touched.location && props.errors.location)}>
+                                    <FormLabel>Location</FormLabel>
+                                    <Input
+                                        type="text"
+                                        id="location"
+                                        name="location"
+                                        onChange={props.handleChange}
+                                        value={props.values.location}
+                                    />
+                                    <FormErrorMessage>{props.errors.location}</FormErrorMessage>
+                                </FormControl>
+
+                                <Button
+                                    type="submit"
+                                    isLoading={props.isSubmitting}
+                                    loadingText="Updating Profile"
+                                    disabled={props.isSubmitting ? props.isSubmitting : props.dirty}
+                                    colorScheme={'brand'}
+                                    width={'fit-content'}
+                                >
+                                    Update Profile
+                                </Button>
+                            </Flex>
+                        </Form>
+                    )}
+                </Formik>
             </>
         );
     }

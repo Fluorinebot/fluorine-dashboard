@@ -1,9 +1,9 @@
 import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import GuildCard from '#/components/GuildCard';
 import { BASE_URI } from '#/lib/constants';
-import type { FluorineGuild } from '#/lib/types';
-import useAPI from '#/lib/useAPI';
+import type { FluorineGuild, WithPayload } from '#/lib/types';
 import { Box, Center, Divider, Flex, Grid, GridItem, Spinner, Text } from '@chakra-ui/react';
+import useSWR from 'swr';
 
 const isAllowed = (x: FluorineGuild) => (Number(x.permissions) & 0x8) === 0x8 || (Number(x.permissions) & 0x20) === 32;
 
@@ -41,10 +41,12 @@ function GuildSection({ header, data }: { header: string; data: FluorineGuild[] 
     );
 }
 
-const GuildSelection: React.FC = () => {
-    const { loading, data, error, code } = useAPI<{ guilds: FluorineGuild[] }>(`${BASE_URI}/guilds`, { method: 'GET' });
+const Guilds: React.FC = () => {
+    const { isLoading, data, error } = useSWR<WithPayload<{ guilds: FluorineGuild[] }>, WithPayload<any>>([
+        `${BASE_URI}/guilds`
+    ]);
 
-    if (loading) {
+    if (isLoading) {
         return (
             <Center width="100%" height="100vh">
                 <Spinner size="xl" color="fixedBlue.100" />
@@ -53,7 +55,7 @@ const GuildSelection: React.FC = () => {
     }
 
     if (error) {
-        if (code === 401) {
+        if (error.code === 401) {
             return <AuthorizeError />;
         }
 
@@ -61,7 +63,7 @@ const GuildSelection: React.FC = () => {
     }
 
     if (data) {
-        const filtered = data.guilds.filter(x => isAllowed(x));
+        const filtered = data.payload.guilds.filter(x => isAllowed(x));
         const guildsWithFluorine = filtered.filter(x => x.fluorine);
         const guildsWithoutFluorine = filtered.filter(x => !x.fluorine);
 
@@ -88,4 +90,4 @@ const GuildSelection: React.FC = () => {
     return <></>;
 };
 
-export default GuildSelection;
+export default Guilds;

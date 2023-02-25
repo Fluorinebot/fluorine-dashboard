@@ -16,7 +16,6 @@ const GuildWithIDSidebar: React.FC<{
     loading: boolean;
     error: ErrorType<any>;
     data: any;
-    code: number;
     isGuildBackURI?: boolean;
     id?: string;
 }> = ({ loading, data, error, id, isGuildBackURI }) => {

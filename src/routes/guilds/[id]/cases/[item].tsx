@@ -1,8 +1,7 @@
 import AvatarWithName from '#/components/AvatarWithName';
 import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import { BASE_URI } from '#/lib/constants';
-import type { Case } from '#/lib/types';
-import useAPI from '#/lib/useAPI';
+import type { Case, WithPayload } from '#/lib/types';
 import {
     AlertDialog,
     AlertDialogBody,
@@ -28,6 +27,8 @@ import { Form, Formik, type FormikHelpers } from 'formik';
 import { useRef } from 'react';
 import { MdDelete } from 'react-icons/md';
 import { useNavigate, useParams } from 'react-router-dom';
+import useSWR, { useSWRConfig } from 'swr';
+import useSWRMutation from 'swr/mutation';
 
 function toTitleCase(str: string) {
     return str
@@ -44,13 +45,48 @@ export default function Case() {
     const params = useParams();
     const navigate = useNavigate();
 
-    const { loading, data, code, error } = useAPI<Case>(`${BASE_URI}/guilds/${params.id}/cases/${params.item}`);
+    const { data, error, isLoading } = useSWR<WithPayload<Case>, WithPayload<any>>([
+        `${BASE_URI}/guilds/${params.id}/cases/${params.item}`
+    ]);
+
+    const { mutate } = useSWRConfig();
+    const { trigger: editReason } = useSWRMutation(
+        [`${BASE_URI}/guilds/${params.id}/cases/${params.item}`],
+        async ([url], { arg }) => {
+            const res = await fetch(url, {
+                credentials: 'include',
+                method: 'PATCH',
+                body: arg
+            });
+
+            return {
+                code: res.status,
+                payload: res.json()
+            };
+        }
+    );
+
+    const { trigger: deleteCaseTrigger } = useSWRMutation(
+        [`${BASE_URI}/guilds/${params.id}/cases/${params.item}`, 'CaseDelete::Trigger'],
+        async ([url]) => {
+            const res = await fetch(url, {
+                credentials: 'include',
+                method: 'DELETE'
+            });
+
+            return {
+                code: res.status,
+                payload: res.json()
+            };
+        }
+    );
+
     const { isOpen, onOpen, onClose, getButtonProps, getDisclosureProps } = useDisclosure({
         id: 'CaseWithItem::DeleteConfirmModal'
     });
     const cancelRef = useRef<any>();
 
-    if (loading) {
+    if (isLoading) {
         return (
             <Center width="100%" height="100vh">
                 <Spinner size="xl" color="fixedBlue.100" />
@@ -59,10 +95,11 @@ export default function Case() {
     }
 
     if (error) {
-        if (code === 401) {
+        if (error.code === 401) {
             return <AuthorizeError />;
         }
-        if (code === 404) {
+
+        if (error.code === 404) {
             return (
                 <ErrorMessage
                     heading="Not Found!"
@@ -84,17 +121,13 @@ export default function Case() {
     }
 
     if (data) {
+        const { payload } = data;
+
         const handleSumbit = (values: Values, actions: FormikHelpers<Values>) => {
             setTimeout(async () => {
-                const patch = await fetch(`${BASE_URI}/guilds/${params.id}/cases/${params.item}`, {
-                    credentials: 'include',
-                    method: 'PATCH',
-                    body: JSON.stringify(values)
-                }).catch(err => {
-                    throw new Error(err.message);
-                });
+                const patch = await editReason(JSON.stringify(values));
 
-                if (patch.ok) {
+                if (patch && patch.code >= 200 && patch.code <= 200) {
                     toast({
                         title: 'Saved changes.',
                         status: 'success',
@@ -110,21 +143,15 @@ export default function Case() {
                     });
                 }
 
-                actions.setValues(values);
                 actions.setSubmitting(false);
-            }, 1000);
+            }, 250);
         };
 
-        const deleteCase = () => {
-            setTimeout(async () => {
-                const patch = await fetch(`${BASE_URI}/guilds/${params.id}/cases/${params.item}`, {
-                    credentials: 'include',
-                    method: 'DELETE'
-                }).catch(err => {
-                    throw new Error(err.message);
-                });
+        const deleteCase = async () => {
+            const patch = await deleteCaseTrigger();
 
-                if (patch.ok) {
+            if (patch) {
+                if (patch.code >= 200 && patch.code <= 200) {
                     toast({
                         title: 'Deleted case',
                         status: 'success',
@@ -132,7 +159,10 @@ export default function Case() {
                         isClosable: true
                     });
 
-                    navigate(`/guilds/${params.id}/cases`);
+                    setTimeout(() => {
+                        navigate(`/guilds/${params.id}/cases`);
+                        mutate([`${BASE_URI}/guilds/${params.id}/cases`]);
+                    }, 250);
                 } else {
                     toast({
                         title: 'Something went wrong!',
@@ -141,23 +171,23 @@ export default function Case() {
                         isClosable: true
                     });
                 }
+            }
 
-                onClose();
-            }, 0);
+            onClose();
         };
 
         return (
             <Box width={['full', 'full', `${50 + 25 / 2}%`]} height="100vh">
                 <Flex gap={3} direction={'column'}>
                     <Heading as="h2" size="xl" fontWeight={800}>
-                        Case #{data.caseId}
+                        Case #{payload.caseId}
                     </Heading>
                     <Flex>
                         <Text size="md" fontWeight={600} flex="25%" color="gray" marginBlock="auto">
                             Type
                         </Text>
                         <Text size="sm" fontWeight={400} flex="75%">
-                            {toTitleCase(data.type)}
+                            {toTitleCase(payload.type)}
                         </Text>
                     </Flex>
                     <Flex>
@@ -165,7 +195,7 @@ export default function Case() {
                             Moderator
                         </Text>
                         <Box flex="75%">
-                            <AvatarWithName guildId={data.guildId} userId={data.caseCreator} />
+                            <AvatarWithName guildId={payload.guildId} userId={payload.caseCreator} />
                         </Box>
                     </Flex>
                     <Flex>
@@ -173,13 +203,13 @@ export default function Case() {
                             Offending User
                         </Text>
                         <Box flex="75%">
-                            <AvatarWithName guildId={data.guildId} userId={data.moderatedUser} />
+                            <AvatarWithName guildId={payload.guildId} userId={payload.moderatedUser} />
                         </Box>
                     </Flex>
                     <Flex direction="column" gap={2}>
                         <Box>
                             <Formik<Values>
-                                initialValues={{ reason: data.reason ?? '' }}
+                                initialValues={{ reason: payload.reason ?? '' }}
                                 onSubmit={handleSumbit}
                                 enableReinitialize
                             >
@@ -232,7 +262,7 @@ export default function Case() {
                     <AlertDialogOverlay>
                         <AlertDialogContent>
                             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                                Delete Case #{data.caseId}
+                                Delete Case #{payload.caseId}
                             </AlertDialogHeader>
 
                             <AlertDialogBody>

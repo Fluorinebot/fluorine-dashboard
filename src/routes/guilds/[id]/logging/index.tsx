@@ -1,6 +1,6 @@
 import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import { BASE_URI } from '#/lib/constants';
-import useAPI from '#/lib/useAPI';
+import type { WithPayload } from '#/lib/types';
 import {
     Box,
     Button,
@@ -19,6 +19,8 @@ import {
 import { Select } from 'chakra-react-select';
 import { Formik } from 'formik';
 import { useParams } from 'react-router-dom';
+import useSWR from 'swr';
+import useSWRMutation from 'swr/mutation';
 
 interface Config {
     logModerationActions: boolean;
@@ -28,16 +30,33 @@ interface Config {
 
 const Logging: React.FC = () => {
     const params = useParams();
-    const { data, loading, error, code } = useAPI<Config>(`${BASE_URI}/guilds/${params.id}`);
+    const { data, isLoading, error, mutate } = useSWR<WithPayload<Config>>([`${BASE_URI}/guilds/${params.id}`]);
     const {
         data: channels,
-        loading: channelsLoading,
+        isLoading: channelsLoading,
         error: channelsError
-    } = useAPI<any[]>(`${BASE_URI}/guilds/${params.id}/channels`);
+    } = useSWR<WithPayload<any[]>>([`${BASE_URI}/guilds/${params.id}/channels`]);
+
+    const { trigger } = useSWRMutation<WithPayload<any>>(
+        [`${BASE_URI}/guilds/${params.id}`],
+        async ([url]: string[], { arg }: { arg: any }) => {
+            const res = await fetch(url, {
+                credentials: 'include',
+                method: 'PATCH',
+                body: arg
+            });
+
+            return {
+                code: res.status,
+                payload: res.json(),
+                ok: res.ok
+            };
+        }
+    );
 
     const toast = useToast();
 
-    if (loading || channelsLoading) {
+    if (isLoading || channelsLoading) {
         return (
             <Center width="100%" height="100vh">
                 <Spinner size="xl" color="fixedBlue.100" />
@@ -46,7 +65,7 @@ const Logging: React.FC = () => {
     }
 
     if (error || channelsError) {
-        if (code === 401) {
+        if (error.code === 401) {
             return <AuthorizeError />;
         }
 
@@ -69,9 +88,9 @@ const Logging: React.FC = () => {
 
                 <Formik
                     initialValues={{
-                        logsEnabled: data.logsEnabled,
-                        logModerationActions: data.logModerationActions,
-                        logsChannel: data.logsChannel
+                        logsEnabled: data.payload.logsEnabled,
+                        logModerationActions: data.payload.logModerationActions,
+                        logsChannel: data.payload.logsChannel
                     }}
                     onSubmit={(values, actions) => {
                         setTimeout(async () => {
@@ -90,6 +109,8 @@ const Logging: React.FC = () => {
                                     duration: 9000,
                                     isClosable: true
                                 });
+
+                                mutate({ code: data.code, payload: { ...data.payload, ...values } });
                             } else {
                                 toast({
                                     title: 'Something went wrong!',
@@ -132,13 +153,15 @@ const Logging: React.FC = () => {
                                 <FormControl isDisabled={!props.values.logsEnabled}>
                                     <FormLabel>Logs Channel</FormLabel>
                                     <Select
-                                        options={channels}
+                                        options={channels.payload}
                                         id="logsChannel"
                                         name="logsChannel"
                                         placeholder="Select channel"
                                         size="md"
                                         onChange={(value: any) => props.handleChange('logsChannel')(value.id)}
-                                        value={channels.find((channel: any) => channel.id === props.values.logsChannel)}
+                                        value={channels.payload.find(
+                                            (channel: any) => channel.id === props.values.logsChannel
+                                        )}
                                         getOptionLabel={(option: any) => `#${option.name}`}
                                         getOptionValue={(option: any) => option.id}
                                         colorScheme="brand"

@@ -1,14 +1,14 @@
 import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import GuildCard from '#/components/GuildCard';
 import { BASE_URI } from '#/lib/constants';
-import type { FluorineGuild } from '#/lib/types';
-import useAPI from '#/lib/useAPI';
+import type { FluorineGuild, WithPayload } from '#/lib/types';
 import { Center, Divider, Grid, GridItem, Spinner, Text } from '@chakra-ui/react';
+import useSWR from 'swr';
 
 const Leaderboard: React.FC = () => {
-    const { loading, data, error, code } = useAPI<{ guilds: FluorineGuild[] }>(`${BASE_URI}/guilds`, { method: 'GET' });
+    const { isLoading, data, error } = useSWR<WithPayload<{ guilds: FluorineGuild[] }>>([`${BASE_URI}/guilds`]);
 
-    if (loading) {
+    if (isLoading) {
         return (
             <Center width="100%" height="100vh">
                 <Spinner size="xl" color="fixedBlue.100" />
@@ -17,7 +17,7 @@ const Leaderboard: React.FC = () => {
     }
 
     if (error) {
-        if (code === 401) {
+        if (error.code === 401) {
             return <AuthorizeError />;
         }
 
@@ -25,7 +25,7 @@ const Leaderboard: React.FC = () => {
     }
 
     if (data) {
-        const guildsWithFluorine = data.guilds.filter(x => x.fluorine);
+        const guildsWithFluorine = data.payload.guilds.filter(x => x.fluorine);
 
         return (
             <>
@@ -33,8 +33,8 @@ const Leaderboard: React.FC = () => {
                     Server Leaderboards
                 </Text>
                 <Text fontSize={'lg'} as="p" fontWeight={400} colorScheme="whiteAlpha" marginBlock={'auto'}>
-                    You are a member of {data.guilds.length} servers, of those servers, {guildsWithFluorine.length} have
-                    Fluorine.
+                    You are a member of {data.payload.guilds.length} servers, of those servers,{' '}
+                    {guildsWithFluorine.length} have Fluorine.
                 </Text>
 
                 <Divider marginY={2} />

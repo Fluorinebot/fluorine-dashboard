@@ -28,3 +28,5 @@ export interface User {
 }
 
 export type FluorineGuild = APIGuild & { fluorine: boolean };
+
+export type WithPayload<T> = { payload: T; code: number; ok?: boolean };

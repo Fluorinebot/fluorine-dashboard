@@ -1,8 +1,7 @@
 import AvatarWithName from '#/components/AvatarWithName';
 import { AuthorizeError, ErrorMessage } from '#/components/ErrorBoundary';
 import { BASE_URI } from '#/lib/constants';
-import type { Case } from '#/lib/types';
-import useAPI from '#/lib/useAPI';
+import type { Case, WithPayload } from '#/lib/types';
 import {
     Box,
     Card,
@@ -47,6 +46,7 @@ import {
 } from 'react-icons/md';
 import { useMediaQuery } from 'react-responsive';
 import { Link as RouteTo, useParams } from 'react-router-dom';
+import useSWR from 'swr';
 
 function toTitleCase(str: string) {
     return str
@@ -94,7 +94,7 @@ const TableNavigation: React.FC<{ table: TableType<Case> }> = ({ table }) => (
 
 export default function Cases() {
     const params = useParams();
-    const { loading, data: caseData, code, error } = useAPI<Case[]>(`${BASE_URI}/guilds/${params.id}/cases`);
+    const { isLoading, data: data, error } = useSWR<WithPayload<Case[]>>([`${BASE_URI}/guilds/${params.id}/cases`]);
     const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
     const columnHelper = createColumnHelper<Case>();
@@ -125,10 +125,10 @@ export default function Cases() {
         })
     ];
 
-    const data = useMemo(() => caseData ?? [], [caseData]);
+    const memoized = useMemo(() => data?.payload ?? [], [data]);
 
     const table = useReactTable({
-        data,
+        data: memoized,
         columns,
         state: {
             sorting
@@ -140,7 +140,7 @@ export default function Cases() {
         getPaginationRowModel: getPaginationRowModel()
     });
 
-    if (loading) {
+    if (isLoading) {
         return (
             <Center width="100%" height="100vh">
                 <Spinner size="xl" color="fixedBlue.100" />
@@ -149,7 +149,7 @@ export default function Cases() {
     }
 
     if (error) {
-        if (code === 401) {
+        if (error.code === 401) {
             return <AuthorizeError />;
         }
 
@@ -162,7 +162,7 @@ export default function Cases() {
         );
     }
 
-    if (caseData) {
+    if (data) {
         if (isMobile) {
             return (
                 <>
