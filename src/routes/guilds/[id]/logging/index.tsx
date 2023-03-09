@@ -17,7 +17,8 @@ import {
     useToast
 } from '@chakra-ui/react';
 import { Select } from 'chakra-react-select';
-import { Formik } from 'formik';
+import { ChannelType } from 'discord-api-types/v10';
+import { Form, Formik } from 'formik';
 import { useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
@@ -28,18 +29,26 @@ interface Config {
     logsChannel?: string;
 }
 
+interface Channel {
+    id: string;
+    name: string;
+    position: number;
+    type: ChannelType;
+    parentId: string;
+}
+
 const Logging: React.FC = () => {
     const params = useParams();
-    const { data, isLoading, error, mutate } = useSWR<WithPayload<Config>>([`${BASE_URI}/guilds/${params.id}`]);
+    const { data, isLoading, error } = useSWR<WithPayload<Config>>([`${BASE_URI}/guilds/${params.id}`]);
     const {
         data: channels,
         isLoading: channelsLoading,
         error: channelsError
-    } = useSWR<WithPayload<any[]>>([`${BASE_URI}/guilds/${params.id}/channels`]);
+    } = useSWR<WithPayload<Channel[]>>([`${BASE_URI}/guilds/${params.id}/channels`]);
 
-    const { trigger } = useSWRMutation<WithPayload<any>>(
+    const { trigger } = useSWRMutation<WithPayload<any>, any, string[], string>(
         [`${BASE_URI}/guilds/${params.id}`],
-        async ([url]: string[], { arg }: { arg: any }) => {
+        async ([url], { arg }) => {
             const res = await fetch(url, {
                 credentials: 'include',
                 method: 'PATCH',
@@ -73,6 +82,54 @@ const Logging: React.FC = () => {
     }
 
     if (data && channels) {
+        const categories = channels.payload.filter(category => category.type === ChannelType.GuildCategory);
+        const textChannels = channels.payload.filter(channel =>
+            [ChannelType.GuildText, ChannelType.AnnouncementThread].includes(channel.type)
+        );
+
+        const categoriesToChannels = [
+            {
+                label: 'Uncategorized',
+                options: textChannels
+                    .filter(channel => channel.parentId === '0')
+                    .sort((a, b) => {
+                        if (a.position < b.position) {
+                            return -1;
+                        }
+                        if (a.position > b.position) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+            },
+            ...categories
+                .sort((a, b) => {
+                    if (a.position < b.position) {
+                        return -1;
+                    }
+
+                    if (a.position > b.position) {
+                        return 1;
+                    }
+
+                    return 0;
+                })
+                .map(category => ({
+                    label: category.name,
+                    options: textChannels
+                        .filter(channel => channel.parentId === category.id)
+                        .sort((first, second) => {
+                            if (first.position < second.position) {
+                                return -1;
+                            }
+                            if (first.position > second.position) {
+                                return 1;
+                            }
+                            return 0;
+                        })
+                }))
+        ];
+
         return (
             <Box width={['full', 'full', `${50 + 25 / 2}%`]} height="100vh">
                 <Flex direction={'column'} gap={2}>
@@ -94,23 +151,15 @@ const Logging: React.FC = () => {
                     }}
                     onSubmit={(values, actions) => {
                         setTimeout(async () => {
-                            const patch = await fetch(`${BASE_URI}/guilds/${params.id}`, {
-                                credentials: 'include',
-                                method: 'PATCH',
-                                body: JSON.stringify(values)
-                            }).catch(err => {
-                                throw new Error(err.message);
-                            });
+                            const patch = await trigger(JSON.stringify(values));
 
-                            if (patch.ok) {
+                            if (patch && patch.ok) {
                                 toast({
                                     title: 'Saved changes.',
                                     status: 'success',
                                     duration: 9000,
                                     isClosable: true
                                 });
-
-                                mutate({ code: data.code, payload: { ...data.payload, ...values } });
                             } else {
                                 toast({
                                     title: 'Something went wrong!',
@@ -127,59 +176,59 @@ const Logging: React.FC = () => {
                     enableReinitialize
                 >
                     {props => (
-                        <form onSubmit={props.handleSubmit}>
+                        <Form>
                             <Stack spacing={4} direction="column">
                                 <Switch
                                     id="logsEnabled"
                                     name="logsEnabled"
                                     onChange={props.handleChange}
-                                    checked={props.values.logsEnabled}
+                                    isChecked={props.values.logsEnabled}
                                     colorScheme="brand"
                                 >
                                     Log messages [edits/deletes]
                                 </Switch>
-
                                 <Switch
                                     id="logModerationActions"
                                     name="logModerationActions"
                                     onChange={props.handleChange}
-                                    checked={props.values.logModerationActions}
-                                    disabled={!props.values.logsEnabled}
+                                    isChecked={props.values.logModerationActions}
+                                    isDisabled={!props.values.logsEnabled}
                                     colorScheme="brand"
                                 >
                                     Log cases
                                 </Switch>
-
                                 <FormControl isDisabled={!props.values.logsEnabled}>
                                     <FormLabel>Logs Channel</FormLabel>
                                     <Select
-                                        options={channels.payload}
+                                        options={categoriesToChannels}
                                         id="logsChannel"
                                         name="logsChannel"
                                         placeholder="Select channel"
                                         size="md"
+                                        colorScheme="brand"
                                         onChange={(value: any) => props.handleChange('logsChannel')(value.id)}
                                         value={channels.payload.find(
-                                            (channel: any) => channel.id === props.values.logsChannel
+                                            channel => channel.id === props.values.logsChannel
                                         )}
-                                        getOptionLabel={(option: any) => `#${option.name}`}
-                                        getOptionValue={(option: any) => option.id}
-                                        colorScheme="brand"
+                                        getOptionLabel={(option: Channel) => `#${option.name}`}
+                                        getOptionValue={(option: Channel) => option.id}
+                                        selectedOptionStyle="check"
+                                        isSearchable
+                                        hasStickyGroupHeaders
                                     />
                                 </FormControl>
-
                                 <Button
                                     type="submit"
                                     isLoading={props.isSubmitting}
                                     loadingText="Saving changes"
-                                    disabled={props.isSubmitting ? props.isSubmitting : props.dirty}
+                                    isDisabled={props.isSubmitting ? props.isSubmitting : !props.dirty}
                                     colorScheme={'brand'}
                                     width={'fit-content'}
                                 >
                                     Save changes
                                 </Button>
                             </Stack>
-                        </form>
+                        </Form>
                     )}
                 </Formik>
             </Box>

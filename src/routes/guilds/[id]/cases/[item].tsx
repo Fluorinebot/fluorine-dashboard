@@ -230,7 +230,7 @@ export default function Case() {
                                                 type="submit"
                                                 isLoading={isSubmitting}
                                                 loadingText="Saving Changes"
-                                                disabled={isSubmitting ? isSubmitting : dirty}
+                                                isDisabled={isSubmitting ? isSubmitting : !dirty}
                                                 colorScheme={'brand'}
                                             >
                                                 Save Changes

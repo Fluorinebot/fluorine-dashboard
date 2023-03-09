@@ -239,7 +239,7 @@ const Home: React.FC = () => {
                                     type="submit"
                                     isLoading={props.isSubmitting}
                                     loadingText="Updating Profile"
-                                    disabled={props.isSubmitting ? props.isSubmitting : props.dirty}
+                                    isDisabled={props.isSubmitting ? props.isSubmitting : !props.dirty}
                                     colorScheme={'brand'}
                                     width={'fit-content'}
                                 >
