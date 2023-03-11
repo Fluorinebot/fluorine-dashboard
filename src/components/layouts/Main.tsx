@@ -28,7 +28,7 @@ const MainLayout: React.FC = () => {
                     </Box>
                     <Box as="main" flex="80%" padding={4} maxHeight="100vh" overflowY="scroll">
                         <Center flexDirection={'column'}>
-                            <Box width={['full', 'full', `${50 + 25 / 2}%`]}>
+                            <Box width={['full', 'full', `${50 + 25 / 4}%`]}>
                                 <Outlet />
                             </Box>
                         </Center>

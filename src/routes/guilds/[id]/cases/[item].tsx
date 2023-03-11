@@ -49,6 +49,15 @@ export default function Case() {
         `${BASE_URI}/guilds/${params.id}/cases/${params.item}`
     ]);
 
+    const onError = () => {
+        toast({
+            title: 'Something went wrong!',
+            status: 'error',
+            duration: 9000,
+            isClosable: true
+        });
+    };
+
     const { mutate } = useSWRConfig();
     const { trigger: editReason } = useSWRMutation(
         [`${BASE_URI}/guilds/${params.id}/cases/${params.item}`],
@@ -63,6 +72,22 @@ export default function Case() {
                 code: res.status,
                 payload: res.json()
             };
+        },
+        {
+            onSuccess: () => {
+                toast({
+                    title: 'Deleted case',
+                    status: 'success',
+                    duration: 9000,
+                    isClosable: true
+                });
+
+                setTimeout(() => {
+                    navigate(`/guilds/${params.id}/cases`);
+                    mutate([`${BASE_URI}/guilds/${params.id}/cases`]);
+                }, 250);
+            },
+            onError
         }
     );
 
@@ -78,6 +103,22 @@ export default function Case() {
                 code: res.status,
                 payload: res.json()
             };
+        },
+        {
+            onSuccess: () => {
+                toast({
+                    title: 'Deleted case',
+                    status: 'success',
+                    duration: 9000,
+                    isClosable: true
+                });
+
+                setTimeout(() => {
+                    navigate(`/guilds/${params.id}/cases`);
+                    mutate([`${BASE_URI}/guilds/${params.id}/cases`]);
+                }, 250);
+            },
+            onError
         }
     );
 
@@ -125,54 +166,13 @@ export default function Case() {
 
         const handleSumbit = (values: Values, actions: FormikHelpers<Values>) => {
             setTimeout(async () => {
-                const patch = await editReason(JSON.stringify(values));
-
-                if (patch && patch.code >= 200 && patch.code <= 200) {
-                    toast({
-                        title: 'Saved changes.',
-                        status: 'success',
-                        duration: 9000,
-                        isClosable: true
-                    });
-                } else {
-                    toast({
-                        title: 'Something went wrong!',
-                        status: 'error',
-                        duration: 9000,
-                        isClosable: true
-                    });
-                }
-
+                await editReason(JSON.stringify(values));
                 actions.setSubmitting(false);
-            }, 250);
+            }, 0);
         };
 
         const deleteCase = async () => {
-            const patch = await deleteCaseTrigger();
-
-            if (patch) {
-                if (patch.code >= 200 && patch.code <= 200) {
-                    toast({
-                        title: 'Deleted case',
-                        status: 'success',
-                        duration: 9000,
-                        isClosable: true
-                    });
-
-                    setTimeout(() => {
-                        navigate(`/guilds/${params.id}/cases`);
-                        mutate([`${BASE_URI}/guilds/${params.id}/cases`]);
-                    }, 250);
-                } else {
-                    toast({
-                        title: 'Something went wrong!',
-                        status: 'error',
-                        duration: 9000,
-                        isClosable: true
-                    });
-                }
-            }
-
+            await deleteCaseTrigger();
             onClose();
         };
 

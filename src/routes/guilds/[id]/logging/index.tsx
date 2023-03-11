@@ -131,7 +131,7 @@ const Logging: React.FC = () => {
         ];
 
         return (
-            <Box width={['full', 'full', `${50 + 25 / 2}%`]} height="100vh">
+            <Box width={['full', 'full', `${50 + 25 / 4}%`]} height="100vh">
                 <Flex direction={'column'} gap={2}>
                     <Heading as="h2" size="xl" fontWeight={800}>
                         Logging
@@ -201,15 +201,15 @@ const Logging: React.FC = () => {
                                     <FormLabel>Logs Channel</FormLabel>
                                     <Select
                                         options={categoriesToChannels}
+                                        value={channels.payload.find(
+                                            channel => channel.id === props.values.logsChannel
+                                        )}
+                                        onChange={(value: any) => props.handleChange('logsChannel')(value.id)}
                                         id="logsChannel"
                                         name="logsChannel"
                                         placeholder="Select channel"
                                         size="md"
                                         colorScheme="brand"
-                                        onChange={(value: any) => props.handleChange('logsChannel')(value.id)}
-                                        value={channels.payload.find(
-                                            channel => channel.id === props.values.logsChannel
-                                        )}
                                         getOptionLabel={(option: Channel) => `#${option.name}`}
                                         getOptionValue={(option: Channel) => option.id}
                                         selectedOptionStyle="check"
