@@ -76,16 +76,11 @@ export default function Case() {
         {
             onSuccess: () => {
                 toast({
-                    title: 'Deleted case',
+                    title: 'Reason has been edited!',
                     status: 'success',
                     duration: 9000,
                     isClosable: true
                 });
-
-                setTimeout(() => {
-                    navigate(`/guilds/${params.id}/cases`);
-                    mutate([`${BASE_URI}/guilds/${params.id}/cases`]);
-                }, 250);
             },
             onError
         }

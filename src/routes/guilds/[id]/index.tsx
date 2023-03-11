@@ -82,13 +82,7 @@ const Guild: React.FC = () => {
             {isMobile ? (
                 <Box>
                     <Sidebar>
-                        <TabsList
-                            data={data?.payload}
-                            error={error?.payload}
-                            loading={isLoading}
-                            id={params.id}
-                            isGuildBackURI={Boolean(params.item)}
-                        />
+                        <TabsList />
                     </Sidebar>
 
                     <Box as="main" padding={4} height="100%">
@@ -99,13 +93,7 @@ const Guild: React.FC = () => {
                 <Flex overflowY="hidden" height="100vh">
                     <Box flex="20%" height="100vh">
                         <Sidebar>
-                            <TabsList
-                                data={data?.payload}
-                                error={error?.payload}
-                                loading={isLoading}
-                                id={params.id}
-                                isGuildBackURI={Boolean(params.item)}
-                            />
+                            <TabsList />
                         </Sidebar>
                     </Box>
                     <Box as="main" flex="80%" padding={4} height="100vh" overflowY="scroll">

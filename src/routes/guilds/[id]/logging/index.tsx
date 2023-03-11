@@ -82,53 +82,43 @@ const Logging: React.FC = () => {
     }
 
     if (data && channels) {
-        const categories = channels.payload.filter(category => category.type === ChannelType.GuildCategory);
+        const categoryChannels = channels.payload.filter(category => category.type === ChannelType.GuildCategory);
         const textChannels = channels.payload.filter(channel =>
             [ChannelType.GuildText, ChannelType.AnnouncementThread].includes(channel.type)
         );
 
-        const categoriesToChannels = [
-            {
-                label: 'Uncategorized',
+        const categories: Channel[] = [
+            { name: 'Uncategorized', parentId: '0', position: 0, id: '0', type: ChannelType.GuildCategory },
+            ...categoryChannels.sort((a, b) => {
+                if (a.position < b.position) {
+                    return -1;
+                }
+
+                if (a.position > b.position) {
+                    return 1;
+                }
+
+                return 0;
+            })
+        ];
+
+        const categoriesToChannels = categories
+            .map(category => ({
+                label: category.name,
                 options: textChannels
-                    .filter(channel => channel.parentId === '0')
-                    .sort((a, b) => {
-                        if (a.position < b.position) {
+                    .filter(channel => channel.parentId === category.id)
+                    .sort((first, second) => {
+                        if (first.position < second.position) {
                             return -1;
                         }
-                        if (a.position > b.position) {
+                        if (first.position > second.position) {
                             return 1;
                         }
                         return 0;
                     })
-            },
-            ...categories
-                .sort((a, b) => {
-                    if (a.position < b.position) {
-                        return -1;
-                    }
-
-                    if (a.position > b.position) {
-                        return 1;
-                    }
-
-                    return 0;
-                })
-                .map(category => ({
-                    label: category.name,
-                    options: textChannels
-                        .filter(channel => channel.parentId === category.id)
-                        .sort((first, second) => {
-                            if (first.position < second.position) {
-                                return -1;
-                            }
-                            if (first.position > second.position) {
-                                return 1;
-                            }
-                            return 0;
-                        })
-                }))
-        ];
+            }))
+            .filter(x => x.options.length > 0)
+            .map((category, index) => ({ ...category, index }));
 
         return (
             <Box width={['full', 'full', `${50 + 25 / 4}%`]} height="100vh">
@@ -212,9 +202,13 @@ const Logging: React.FC = () => {
                                         colorScheme="brand"
                                         getOptionLabel={(option: Channel) => `#${option.name}`}
                                         getOptionValue={(option: Channel) => option.id}
-                                        selectedOptionStyle="check"
+                                        selectedOptionStyle="color"
                                         isSearchable
-                                        hasStickyGroupHeaders
+                                        formatGroupLabel={group => (
+                                            <Text paddingTop={group.index === 0 ? 0 : 4} color="gray">
+                                                {group.label}
+                                            </Text>
+                                        )}
                                     />
                                 </FormControl>
                                 <Button
