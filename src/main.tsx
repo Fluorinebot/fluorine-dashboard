@@ -50,7 +50,8 @@ const FluorineDashboard = () => {
                                             id: key[0],
                                             title: 'This is taking a while...',
                                             description: "If it takes too long, we're probably down.",
-                                            status: 'loading'
+                                            status: 'loading',
+                                            position: 'top'
                                         });
                                     },
                                     onSuccess(data, key) {
